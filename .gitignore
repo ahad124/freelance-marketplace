@@ -1,0 +1,33 @@
+# .NET
+bin/
+obj/
+*.user
+[Dd]ebug/
+[Rr]elease/
+TestResults/
+coverage.cobertura.xml
+coverage.opencover.xml
+*.coverage
+project.lock.json
+
+# Node / frontend
+node_modules/
+frontend/dist/
+frontend/.vite/
+npm-debug.log*
+yarn-error.log*
+
+# Uploads (runtime data — never commit user files)
+backend/src/FreelanceMarketplace.Api/uploads/
+uploads/
+
+# Env & secrets
+.env
+*.env.local
+appsettings.*.local.json
+
+# IDE / OS
+.vs/
+.idea/
+.vscode/
+.DS_Store
