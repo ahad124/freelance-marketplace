@@ -13,9 +13,9 @@ public class Proposal
 
     public string CoverLetter { get; set; } = string.Empty;
     public decimal BidAmount { get; set; }
-    public DateTimeOffset DeliveryDate { get; set; }
+    public DateTime DeliveryDate { get; set; }
 
     public ProposalStatus Status { get; set; } = ProposalStatus.Submitted;
 
-    public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 }

@@ -34,7 +34,7 @@ namespace FreelanceMarketplace.Api.Data.Migrations
                     PreferredCurrency = table.Column<string>(type: "nvarchar(3)", maxLength: 3, nullable: false),
                     AvatarPath = table.Column<string>(type: "nvarchar(400)", maxLength: 400, nullable: true),
                     IsDisabled = table.Column<bool>(type: "bit", nullable: false),
-                    CreatedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -175,7 +175,7 @@ namespace FreelanceMarketplace.Api.Data.Migrations
                     BudgetCurrency = table.Column<string>(type: "nvarchar(3)", maxLength: 3, nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false),
                     AttachmentPath = table.Column<string>(type: "nvarchar(400)", maxLength: 400, nullable: true),
-                    CreatedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false)
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -197,9 +197,9 @@ namespace FreelanceMarketplace.Api.Data.Migrations
                     FreelancerId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     CoverLetter = table.Column<string>(type: "nvarchar(4000)", maxLength: 4000, nullable: false),
                     BidAmount = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
-                    DeliveryDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    DeliveryDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false),
-                    CreatedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false)
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {

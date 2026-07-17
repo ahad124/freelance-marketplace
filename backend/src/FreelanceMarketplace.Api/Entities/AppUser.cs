@@ -16,7 +16,7 @@ public class AppUser : IdentityUser
     /// <summary>When true the account is blocked from authenticating.</summary>
     public bool IsDisabled { get; set; }
 
-    public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     public ICollection<Job> Jobs { get; set; } = new List<Job>();
     public ICollection<Proposal> Proposals { get; set; } = new List<Proposal>();

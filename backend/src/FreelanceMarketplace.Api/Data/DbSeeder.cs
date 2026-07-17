@@ -63,7 +63,7 @@ public static class DbSeeder
                 FreelancerId = freelancer1.Id,
                 CoverLetter = "I have shipped 20+ React landing pages and can deliver in a week.",
                 BidAmount = 750m,
-                DeliveryDate = DateTimeOffset.UtcNow.AddDays(7),
+                DeliveryDate = DateTime.UtcNow.AddDays(7),
                 Status = ProposalStatus.Submitted
             });
 

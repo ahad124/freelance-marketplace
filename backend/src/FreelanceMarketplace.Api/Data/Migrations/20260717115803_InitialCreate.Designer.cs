@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FreelanceMarketplace.Api.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260717114918_InitialCreate")]
+    [Migration("20260717115803_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -41,8 +41,8 @@ namespace FreelanceMarketplace.Api.Data.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("datetimeoffset");
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("DisplayName")
                         .IsRequired()
@@ -141,8 +141,8 @@ namespace FreelanceMarketplace.Api.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("datetimeoffset");
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -181,11 +181,11 @@ namespace FreelanceMarketplace.Api.Data.Migrations
                         .HasMaxLength(4000)
                         .HasColumnType("nvarchar(4000)");
 
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("datetimeoffset");
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
 
-                    b.Property<DateTimeOffset>("DeliveryDate")
-                        .HasColumnType("datetimeoffset");
+                    b.Property<DateTime>("DeliveryDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("FreelancerId")
                         .IsRequired()
