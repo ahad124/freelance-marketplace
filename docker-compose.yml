@@ -1,0 +1,58 @@
+services:
+  # ── SQL Server 2022 ───────────────────────────────────────────────────────
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: freelance_db
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "Password123!"
+      MSSQL_PID: Developer
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqldata:/var/opt/mssql
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'Password123!' -Q 'SELECT 1' -C -b -o /dev/null"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 30s
+
+  # ── .NET 8 API ────────────────────────────────────────────────────────────
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    container_name: freelance_api
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ConnectionStrings__DefaultConnection: >-
+        Server=db,1433;Database=FreelanceMarketplace;User Id=sa;Password=Password123!;TrustServerCertificate=True;
+      Jwt__Secret: "super-secret-jwt-signing-key-change-in-production-please"
+      Jwt__Issuer: "FreelanceMarketplace"
+      Jwt__Audience: "FreelanceMarketplaceUsers"
+      FileStorage__BasePath: /app/uploads
+    volumes:
+      - uploads:/app/uploads
+    ports:
+      - "5107:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: on-failure
+
+  # ── React SPA + Nginx reverse proxy ──────────────────────────────────────
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.web
+    container_name: freelance_web
+    ports:
+      - "3000:80"
+    depends_on:
+      - api
+    restart: on-failure
+
+volumes:
+  sqldata:
+  uploads:
