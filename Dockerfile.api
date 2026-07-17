@@ -1,0 +1,28 @@
+# ── Stage 1: Build ───────────────────────────────────────────────────────────
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+WORKDIR /src
+
+# Restore packages (cache layer)
+COPY backend/src/FreelanceMarketplace.Api/FreelanceMarketplace.Api.csproj \
+     backend/src/FreelanceMarketplace.Api/
+RUN dotnet restore backend/src/FreelanceMarketplace.Api/FreelanceMarketplace.Api.csproj
+
+# Copy source and publish
+COPY backend/src/FreelanceMarketplace.Api/ backend/src/FreelanceMarketplace.Api/
+RUN dotnet publish backend/src/FreelanceMarketplace.Api/FreelanceMarketplace.Api.csproj \
+    -c Release -o /app/publish --no-restore
+
+# ── Stage 2: Runtime ──────────────────────────────────────────────────────────
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
+WORKDIR /app
+
+# Create directory for file uploads
+RUN mkdir -p /app/uploads
+
+COPY --from=build /app/publish .
+
+EXPOSE 8080
+ENV ASPNETCORE_URLS=http://+:8080
+ENV ASPNETCORE_ENVIRONMENT=Production
+
+ENTRYPOINT ["dotnet", "FreelanceMarketplace.Api.dll"]
