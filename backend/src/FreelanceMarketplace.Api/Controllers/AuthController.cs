@@ -33,4 +33,10 @@ public class AuthController : ControllerBase
     [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
     public async Task<ActionResult<UserDto>> Me(CancellationToken ct)
         => Ok(await _auth.GetProfileAsync(_currentUser.RequireId(), ct));
+
+    [HttpPut("profile")]
+    [Authorize]
+    [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
+    public async Task<ActionResult<UserDto>> UpdateProfile(UpdateProfileRequest request, CancellationToken ct)
+        => Ok(await _auth.UpdateProfileAsync(_currentUser.RequireId(), request, ct));
 }

@@ -23,7 +23,8 @@ public record CreateJobRequest(
     string Category,
     BudgetType BudgetType,
     decimal BudgetAmount,
-    string BudgetCurrency);
+    string BudgetCurrency,
+    string? AttachmentPath = null);
 
 public record UpdateJobRequest(
     string Title,
@@ -32,7 +33,8 @@ public record UpdateJobRequest(
     BudgetType BudgetType,
     decimal BudgetAmount,
     string BudgetCurrency,
-    JobStatus Status);
+    JobStatus Status,
+    string? AttachmentPath = null);
 
 /// <summary>Filter/search parameters for the public job listing.</summary>
 public record JobQuery(

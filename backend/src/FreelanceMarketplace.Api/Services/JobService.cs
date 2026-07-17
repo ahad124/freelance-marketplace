@@ -79,7 +79,8 @@ public class JobService : IJobService
             BudgetType = request.BudgetType,
             BudgetAmount = request.BudgetAmount,
             BudgetCurrency = request.BudgetCurrency.ToUpperInvariant(),
-            Status = JobStatus.Open
+            Status = JobStatus.Open,
+            AttachmentPath = request.AttachmentPath
         };
 
         _db.Jobs.Add(job);
@@ -100,6 +101,7 @@ public class JobService : IJobService
         job.BudgetAmount = request.BudgetAmount;
         job.BudgetCurrency = request.BudgetCurrency.ToUpperInvariant();
         job.Status = request.Status;
+        job.AttachmentPath = request.AttachmentPath;
 
         await _db.SaveChangesAsync(ct);
         return await GetAsync(job.Id, ct);

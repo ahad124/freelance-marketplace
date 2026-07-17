@@ -10,6 +10,7 @@ public interface IAuthService
     Task<AuthResponse> RegisterAsync(RegisterRequest request, CancellationToken ct = default);
     Task<AuthResponse> LoginAsync(LoginRequest request, CancellationToken ct = default);
     Task<UserDto> GetProfileAsync(string userId, CancellationToken ct = default);
+    Task<UserDto> UpdateProfileAsync(string userId, UpdateProfileRequest request, CancellationToken ct = default);
 }
 
 public class AuthService : IAuthService
@@ -79,6 +80,24 @@ public class AuthService : IAuthService
     {
         var user = await _userManager.FindByIdAsync(userId)
             ?? throw AppException.NotFound("User not found.");
+        return await ToDtoAsync(user);
+    }
+
+    public async Task<UserDto> UpdateProfileAsync(string userId, UpdateProfileRequest request, CancellationToken ct = default)
+    {
+        var user = await _userManager.FindByIdAsync(userId)
+            ?? throw AppException.NotFound("User not found.");
+
+        user.DisplayName = request.DisplayName.Trim();
+        user.PreferredCurrency = request.PreferredCurrency.ToUpperInvariant().Trim();
+        user.AvatarPath = request.AvatarPath;
+
+        var result = await _userManager.UpdateAsync(user);
+        if (!result.Succeeded)
+        {
+            throw AppException.Validation(string.Join(" ", result.Errors.Select(e => e.Description)));
+        }
+
         return await ToDtoAsync(user);
     }
 

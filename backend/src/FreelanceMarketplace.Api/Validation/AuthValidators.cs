@@ -31,3 +31,12 @@ public class LoginRequestValidator : AbstractValidator<LoginRequest>
         RuleFor(x => x.Password).NotEmpty();
     }
 }
+
+public class UpdateProfileRequestValidator : AbstractValidator<UpdateProfileRequest>
+{
+    public UpdateProfileRequestValidator()
+    {
+        RuleFor(x => x.DisplayName).NotEmpty().MaximumLength(120);
+        RuleFor(x => x.PreferredCurrency).NotEmpty().Length(3);
+    }
+}

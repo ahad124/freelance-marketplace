@@ -22,3 +22,8 @@ public record UserDto(
     string PreferredCurrency,
     string? AvatarPath,
     bool IsDisabled);
+
+public record UpdateProfileRequest(
+    string DisplayName,
+    string PreferredCurrency,
+    string? AvatarPath);
