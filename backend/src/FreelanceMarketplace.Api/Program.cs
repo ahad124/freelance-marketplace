@@ -93,8 +93,27 @@ if (!app.Environment.IsEnvironment("Testing"))
 {
     using var scope = app.Services.CreateScope();
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    await db.Database.MigrateAsync();
-    await DbSeeder.SeedAsync(scope.ServiceProvider);
+    var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+
+    // Retry migration to handle race between health-check passing and SQL Server
+    // fully accepting connections (TCP listener ready vs health check timing).
+    const int maxRetries = 10;
+    for (int attempt = 1; attempt <= maxRetries; attempt++)
+    {
+        try
+        {
+            logger.LogInformation("Applying migrations (attempt {Attempt}/{Max})…", attempt, maxRetries);
+            await db.Database.MigrateAsync();
+            await DbSeeder.SeedAsync(scope.ServiceProvider);
+            logger.LogInformation("Database ready.");
+            break;
+        }
+        catch (Exception ex) when (attempt < maxRetries)
+        {
+            logger.LogWarning(ex, "Migration attempt {Attempt} failed. Retrying in 5 s…", attempt);
+            await Task.Delay(TimeSpan.FromSeconds(5));
+        }
+    }
 }
 
 app.Run();

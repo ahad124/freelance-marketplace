@@ -26,7 +26,7 @@ services:
     container_name: freelance_api
     environment:
       ASPNETCORE_ENVIRONMENT: Production
-      ConnectionStrings__DefaultConnection: >-
+      ConnectionStrings__Default: >-
         Server=db,1433;Database=FreelanceMarketplace;User Id=sa;Password=Password123!;TrustServerCertificate=True;
       Jwt__Secret: "super-secret-jwt-signing-key-change-in-production-please"
       Jwt__Issuer: "FreelanceMarketplace"
