@@ -20,6 +20,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IJwtTokenService, JwtTokenService>();
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IJobService, JobService>();
+        services.AddScoped<IProposalService, ProposalService>();
 
         return services;
     }
