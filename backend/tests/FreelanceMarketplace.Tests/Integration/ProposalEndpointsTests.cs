@@ -142,4 +142,65 @@ public class ProposalEndpointsTests : IClassFixture<CustomWebApplicationFactory>
 
         mine.Should().ContainSingle(p => p.JobId == job.Id);
     }
+
+    [Fact]
+    public async Task Client_AcceptProposal_UpdatesStatus_AndJobStatus()
+    {
+        var (client, job) = await CreateJobAsync("prop.client_acc@test.dev", "Job accept");
+        
+        var freelancer1 = await TestAuth.AuthedClientAsync(_factory, "prop.free_acc1@test.dev", "Freelancer");
+        var res1 = await freelancer1.PostAsJsonAsync("/api/proposals", NewProposal(job.Id));
+        var proposal1 = await res1.Content.ReadFromJsonAsync<ProposalDto>();
+
+        var freelancer2 = await TestAuth.AuthedClientAsync(_factory, "prop.free_acc2@test.dev", "Freelancer");
+        var res2 = await freelancer2.PostAsJsonAsync("/api/proposals", NewProposal(job.Id));
+        var proposal2 = await res2.Content.ReadFromJsonAsync<ProposalDto>();
+
+        // Act - accept first proposal
+        var acceptRes = await client.PostAsync($"/api/proposals/{proposal1!.Id}/accept", null);
+        acceptRes.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        var acceptedProposal = await acceptRes.Content.ReadFromJsonAsync<ProposalDto>();
+        acceptedProposal!.Status.Should().Be(ProposalStatus.Accepted);
+
+        // Assert job status changed to InProgress
+        var jobDetails = await client.GetFromJsonAsync<JobDto>($"/api/jobs/{job.Id}");
+        jobDetails!.Status.Should().Be(JobStatus.InProgress);
+
+        // Assert the second proposal was auto-declined
+        var p2Response = await client.GetFromJsonAsync<ProposalDto>($"/api/proposals/{proposal2!.Id}");
+        p2Response!.Status.Should().Be(ProposalStatus.Declined);
+    }
+
+    [Fact]
+    public async Task Client_DeclineProposal_UpdatesStatus()
+    {
+        var (client, job) = await CreateJobAsync("prop.client_dec@test.dev", "Job decline");
+        
+        var freelancer = await TestAuth.AuthedClientAsync(_factory, "prop.free_dec@test.dev", "Freelancer");
+        var res = await freelancer.PostAsJsonAsync("/api/proposals", NewProposal(job.Id));
+        var proposal = await res.Content.ReadFromJsonAsync<ProposalDto>();
+
+        // Act - decline proposal
+        var declineRes = await client.PostAsync($"/api/proposals/{proposal!.Id}/decline", null);
+        declineRes.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        var declinedProposal = await declineRes.Content.ReadFromJsonAsync<ProposalDto>();
+        declinedProposal!.Status.Should().Be(ProposalStatus.Declined);
+    }
+
+    [Fact]
+    public async Task Intruder_AcceptProposal_ReturnsForbidden()
+    {
+        var (_, job) = await CreateJobAsync("prop.client_intr@test.dev", "Job intruder");
+        var freelancer = await TestAuth.AuthedClientAsync(_factory, "prop.free_intr@test.dev", "Freelancer");
+        var res = await freelancer.PostAsJsonAsync("/api/proposals", NewProposal(job.Id));
+        var proposal = await res.Content.ReadFromJsonAsync<ProposalDto>();
+
+        var intruder = await TestAuth.AuthedClientAsync(_factory, "prop.client_intr2@test.dev", "Client");
+
+        // Act - accept proposal
+        var acceptRes = await intruder.PostAsync($"/api/proposals/{proposal!.Id}/accept", null);
+        acceptRes.StatusCode.Should().Be(HttpStatusCode.Forbidden);
+    }
 }

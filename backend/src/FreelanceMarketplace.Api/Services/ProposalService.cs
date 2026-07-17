@@ -13,6 +13,8 @@ public interface IProposalService
     Task<ProposalDto> GetAsync(Guid id, CancellationToken ct = default);
     Task<ProposalDto> UpdateAsync(Guid id, UpdateProposalRequest request, CancellationToken ct = default);
     Task<ProposalDto> WithdrawAsync(Guid id, CancellationToken ct = default);
+    Task<ProposalDto> AcceptAsync(Guid id, CancellationToken ct = default);
+    Task<ProposalDto> DeclineAsync(Guid id, CancellationToken ct = default);
     Task DeleteAsync(Guid id, CancellationToken ct = default);
 }
 
@@ -122,6 +124,66 @@ public class ProposalService : IProposalService
         EnsureOwner(proposal);
 
         proposal.Status = ProposalStatus.Withdrawn;
+        await _db.SaveChangesAsync(ct);
+        return await GetAsync(proposal.Id, ct);
+    }
+
+    public async Task<ProposalDto> AcceptAsync(Guid id, CancellationToken ct = default)
+    {
+        var proposal = await _db.Proposals
+            .Include(p => p.Job)
+            .FirstOrDefaultAsync(p => p.Id == id, ct)
+            ?? throw AppException.NotFound("Proposal not found.");
+
+        if (proposal.Job!.ClientId != _currentUser.Id && !_currentUser.IsAdmin)
+        {
+            throw AppException.Forbidden("Only the job owner can accept proposals.");
+        }
+
+        if (proposal.Status != ProposalStatus.Submitted)
+        {
+            throw AppException.BadRequest("Only a submitted proposal can be accepted.");
+        }
+
+        if (proposal.Job.Status != JobStatus.Open)
+        {
+            throw AppException.BadRequest("This job is no longer open.");
+        }
+
+        proposal.Status = ProposalStatus.Accepted;
+        proposal.Job.Status = JobStatus.InProgress;
+
+        // Auto-decline other submitted proposals on the same job
+        var otherProposals = await _db.Proposals
+            .Where(p => p.JobId == proposal.JobId && p.Id != proposal.Id && p.Status == ProposalStatus.Submitted)
+            .ToListAsync(ct);
+        foreach (var other in otherProposals)
+        {
+            other.Status = ProposalStatus.Declined;
+        }
+
+        await _db.SaveChangesAsync(ct);
+        return await GetAsync(proposal.Id, ct);
+    }
+
+    public async Task<ProposalDto> DeclineAsync(Guid id, CancellationToken ct = default)
+    {
+        var proposal = await _db.Proposals
+            .Include(p => p.Job)
+            .FirstOrDefaultAsync(p => p.Id == id, ct)
+            ?? throw AppException.NotFound("Proposal not found.");
+
+        if (proposal.Job!.ClientId != _currentUser.Id && !_currentUser.IsAdmin)
+        {
+            throw AppException.Forbidden("Only the job owner can decline proposals.");
+        }
+
+        if (proposal.Status != ProposalStatus.Submitted)
+        {
+            throw AppException.BadRequest("Only a submitted proposal can be declined.");
+        }
+
+        proposal.Status = ProposalStatus.Declined;
         await _db.SaveChangesAsync(ct);
         return await GetAsync(proposal.Id, ct);
     }

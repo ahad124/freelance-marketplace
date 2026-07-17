@@ -53,6 +53,16 @@ public class ProposalsController : ControllerBase
     public async Task<ActionResult<ProposalDto>> Withdraw(Guid id, CancellationToken ct)
         => Ok(await _proposals.WithdrawAsync(id, ct));
 
+    [HttpPost("proposals/{id:guid}/accept")]
+    [Authorize(Roles = $"{Roles.Client},{Roles.Admin}")]
+    public async Task<ActionResult<ProposalDto>> Accept(Guid id, CancellationToken ct)
+        => Ok(await _proposals.AcceptAsync(id, ct));
+
+    [HttpPost("proposals/{id:guid}/decline")]
+    [Authorize(Roles = $"{Roles.Client},{Roles.Admin}")]
+    public async Task<ActionResult<ProposalDto>> Decline(Guid id, CancellationToken ct)
+        => Ok(await _proposals.DeclineAsync(id, ct));
+
     [HttpDelete("proposals/{id:guid}")]
     [Authorize(Roles = $"{Roles.Freelancer},{Roles.Admin}")]
     public async Task<IActionResult> Delete(Guid id, CancellationToken ct)
