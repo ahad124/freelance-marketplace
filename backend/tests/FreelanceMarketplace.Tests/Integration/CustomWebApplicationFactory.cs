@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Moq;
 
 namespace FreelanceMarketplace.Tests.Integration;
 
@@ -36,6 +37,14 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
             _connection.Open();
 
             services.AddDbContext<AppDbContext>(options => options.UseSqlite(_connection));
+
+            // Replace real ICurrencyService with a mock that returns a deterministic rate (e.g. 1.25)
+            var currencyMock = new Moq.Mock<FreelanceMarketplace.Api.Services.ICurrencyService>();
+            currencyMock
+                .Setup(c => c.ConvertAsync(Moq.It.IsAny<decimal>(), Moq.It.IsAny<string>(), Moq.It.IsAny<string>(), Moq.It.IsAny<System.Threading.CancellationToken>()))
+                .ReturnsAsync(125m);
+            services.RemoveAll<FreelanceMarketplace.Api.Services.ICurrencyService>();
+            services.AddSingleton(currencyMock.Object);
 
             using var provider = services.BuildServiceProvider();
             using var scope = provider.CreateScope();

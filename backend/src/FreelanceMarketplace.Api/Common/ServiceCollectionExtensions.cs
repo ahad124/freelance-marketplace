@@ -22,6 +22,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IJobService, JobService>();
         services.AddScoped<IProposalService, ProposalService>();
         services.AddScoped<IFileStorage, FileStorage>();
+        services.AddHttpClient<ICurrencyService, CurrencyService>();
 
         return services;
     }
