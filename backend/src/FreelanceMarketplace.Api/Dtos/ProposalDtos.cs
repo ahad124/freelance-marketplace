@@ -6,6 +6,7 @@ public record ProposalDto(
     Guid Id,
     Guid JobId,
     string JobTitle,
+    string JobCurrency,
     string FreelancerId,
     string FreelancerName,
     string CoverLetter,

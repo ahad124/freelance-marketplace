@@ -214,6 +214,7 @@ public class ProposalService : IProposalService
         p.Id,
         p.JobId,
         p.Job!.Title,
+        p.Job!.BudgetCurrency,
         p.FreelancerId,
         p.Freelancer!.DisplayName,
         p.CoverLetter,

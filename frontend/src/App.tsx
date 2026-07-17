@@ -9,6 +9,7 @@ import { JobList } from './views/JobList';
 import { JobDetails } from './views/JobDetails';
 import { JobForm } from './views/JobForm';
 import { AdminDashboard } from './views/AdminDashboard';
+import { Dashboard } from './views/Dashboard';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -35,6 +36,16 @@ function App() {
                 {/* Semi-public: job list visible to all, but budget conversion needs auth */}
                 <Route path="/" element={<JobList />} />
                 <Route path="/jobs/:id" element={<JobDetails />} />
+
+                {/* Protected: All authenticated users */}
+                <Route
+                  path="/dashboard"
+                  element={
+                    <ProtectedRoute>
+                      <Dashboard />
+                    </ProtectedRoute>
+                  }
+                />
 
                 {/* Protected: Client only */}
                 <Route

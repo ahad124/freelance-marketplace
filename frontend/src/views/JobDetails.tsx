@@ -105,6 +105,33 @@ export const JobDetails: React.FC = () => {
     }
   });
 
+  // Accept Proposal mutation
+  const acceptProposalMutation = useMutation({
+    mutationFn: async (proposalId: string) => {
+      await api.post(`/proposals/${proposalId}/accept`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['job', id] });
+      queryClient.invalidateQueries({ queryKey: ['job-proposals', id] });
+    },
+    onError: (err: any) => {
+      alert(err.response?.data?.detail || 'Failed to accept proposal.');
+    }
+  });
+
+  // Decline Proposal mutation
+  const declineProposalMutation = useMutation({
+    mutationFn: async (proposalId: string) => {
+      await api.post(`/proposals/${proposalId}/decline`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['job-proposals', id] });
+    },
+    onError: (err: any) => {
+      alert(err.response?.data?.detail || 'Failed to decline proposal.');
+    }
+  });
+
   const downloadFile = async (filePath: string) => {
     try {
       const response = await api.get(`/files/${filePath}`, { responseType: 'blob' });
@@ -478,19 +505,47 @@ export const JobDetails: React.FC = () => {
                           : 'Declined'}
                       </span>
                     </span>
-                    {user?.role === 'Admin' && (
-                      <button
-                        onClick={async () => {
-                          if (window.confirm('Delete this proposal permanently?')) {
-                            await api.delete(`/proposals/${proposal.id}`);
-                            queryClient.invalidateQueries({ queryKey: ['job-proposals', id] });
-                          }
-                        }}
-                        className="text-red-400 hover:text-red-300 text-xs font-semibold"
-                      >
-                        Delete Bid
-                      </button>
-                    )}
+                    <div className="flex items-center gap-3">
+                      {job.clientId === user?.id && proposal.status === 0 && job.status === 0 && (
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => {
+                              if (window.confirm('Accept this proposal? All other submitted bids will be auto-declined, and the job status will change to In Progress.')) {
+                                acceptProposalMutation.mutate(proposal.id);
+                              }
+                            }}
+                            disabled={acceptProposalMutation.isPending}
+                            className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-1.5 px-3.5 rounded-lg text-xs transition-colors"
+                          >
+                            Accept Bid
+                          </button>
+                          <button
+                            onClick={() => {
+                              if (window.confirm('Decline this proposal?')) {
+                                declineProposalMutation.mutate(proposal.id);
+                              }
+                            }}
+                            disabled={declineProposalMutation.isPending}
+                            className="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 font-bold py-1.5 px-3.5 rounded-lg text-xs transition-colors"
+                          >
+                            Decline
+                          </button>
+                        </div>
+                      )}
+                      {user?.role === 'Admin' && (
+                        <button
+                          onClick={async () => {
+                            if (window.confirm('Delete this proposal permanently?')) {
+                              await api.delete(`/proposals/${proposal.id}`);
+                              queryClient.invalidateQueries({ queryKey: ['job-proposals', id] });
+                            }
+                          }}
+                          className="text-red-400 hover:text-red-300 text-xs font-semibold"
+                        >
+                          Delete Bid
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </div>
               ))}

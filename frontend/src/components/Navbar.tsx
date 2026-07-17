@@ -43,6 +43,15 @@ export const Navbar: React.FC = () => {
             Jobs
           </Link>
 
+          {user && (
+            <Link
+              to="/dashboard"
+              className="px-4 py-2 text-sm font-semibold text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition-colors"
+            >
+              Dashboard
+            </Link>
+          )}
+
           {user?.role === 'Client' && (
             <Link
               to="/jobs/new"
@@ -95,6 +104,14 @@ export const Navbar: React.FC = () => {
                   </div>
 
                   <div className="p-2">
+                    <Link
+                      to="/dashboard"
+                      onClick={() => setMenuOpen(false)}
+                      className="flex items-center w-full px-3 py-2 rounded-lg text-sm font-semibold text-slate-300 hover:text-white hover:bg-slate-800 transition-colors"
+                    >
+                      My Dashboard
+                    </Link>
+
                     {/* Mobile only nav items */}
                     <div className="md:hidden">
                       <Link
