@@ -23,6 +23,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IProposalService, ProposalService>();
         services.AddScoped<IFileStorage, FileStorage>();
         services.AddHttpClient<ICurrencyService, CurrencyService>();
+        services.AddScoped<IAdminService, AdminService>();
 
         return services;
     }
