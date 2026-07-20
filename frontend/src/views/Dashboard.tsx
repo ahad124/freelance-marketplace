@@ -25,7 +25,6 @@ export const Dashboard: React.FC = () => {
     }
   }, [user]);
 
-  // Fetch client's posted jobs
   const { data: myJobs, isLoading: loadingJobs } = useQuery({
     queryKey: ['my-jobs'],
     queryFn: async () => {
@@ -35,7 +34,6 @@ export const Dashboard: React.FC = () => {
     enabled: user?.role === 'Client'
   });
 
-  // Fetch freelancer's submitted proposals
   const { data: myProposals, isLoading: loadingProposals } = useQuery({
     queryKey: ['my-proposals-dashboard'],
     queryFn: async () => {
@@ -45,7 +43,6 @@ export const Dashboard: React.FC = () => {
     enabled: user?.role === 'Freelancer'
   });
 
-  // Withdraw proposal mutation
   const withdrawMutation = useMutation({
     mutationFn: async (proposalId: string) => {
       await api.post(`/proposals/${proposalId}/withdraw`);
@@ -55,7 +52,6 @@ export const Dashboard: React.FC = () => {
     }
   });
 
-  // Avatar upload
   const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -68,9 +64,7 @@ export const Dashboard: React.FC = () => {
 
     try {
       const response = await api.post('/files', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
+        headers: { 'Content-Type': 'multipart/form-data' },
       });
       setAvatarPath(response.data.fileId);
     } catch (err: any) {
@@ -80,7 +74,6 @@ export const Dashboard: React.FC = () => {
     }
   };
 
-  // Profile update submission
   const handleProfileSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setProfileError(null);
@@ -88,11 +81,7 @@ export const Dashboard: React.FC = () => {
     setUpdatingProfile(true);
 
     try {
-      const res = await api.put('/auth/profile', {
-        displayName,
-        preferredCurrency,
-        avatarPath
-      });
+      const res = await api.put('/auth/profile', { displayName, preferredCurrency, avatarPath });
       updateUser(res.data);
       setProfileSuccess(true);
     } catch (err: any) {
@@ -102,80 +91,60 @@ export const Dashboard: React.FC = () => {
     }
   };
 
-  const getStatusLabel = (status: number) => {
-    switch (status) {
-      case 0: return { text: 'Submitted', color: 'text-purple-400 bg-purple-950/60 border-purple-900/50' };
-      case 1: return { text: 'Withdrawn', color: 'text-yellow-500 bg-yellow-950/60 border-yellow-900/50' };
-      case 2: return { text: 'Accepted (Hired)', color: 'text-emerald-400 bg-emerald-950/60 border-emerald-900/50' };
-      case 3: return { text: 'Declined', color: 'text-slate-500 bg-slate-900/60 border-slate-800' };
-      default: return { text: 'Unknown', color: 'text-slate-500 bg-slate-900' };
-    }
-  };
+  const proposalBadge = (status: number) =>
+    status === 0 ? 'badge-brand' : status === 1 ? 'badge-warning' : status === 2 ? 'badge-success' : 'badge-muted';
+  const proposalLabel = (status: number) =>
+    status === 0 ? 'Submitted' : status === 1 ? 'Withdrawn' : status === 2 ? 'Accepted (Hired)' : 'Declined';
 
-  const getJobStatusLabel = (status: number) => {
-    switch (status) {
-      case 0: return { text: 'Open', color: 'text-purple-400 bg-purple-950/60 border-purple-900/50' };
-      case 1: return { text: 'In Progress', color: 'text-emerald-400 bg-emerald-950/60 border-emerald-900/50' };
-      case 2: return { text: 'Closed', color: 'text-slate-500 bg-slate-900/60 border-slate-850' };
-      default: return { text: 'Unknown', color: 'text-slate-500 bg-slate-900' };
-    }
-  };
+  const jobBadge = (status: number) =>
+    status === 0 ? 'badge-success' : status === 1 ? 'badge-warning' : 'badge-muted';
+  const jobLabel = (status: number) => (status === 0 ? 'Open' : status === 1 ? 'In Progress' : 'Closed');
 
   return (
-    <div className="max-w-7xl w-full mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
-      {/* Profile Settings Left Panel */}
+    <div className="container-app max-w-7xl py-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
+      {/* Profile panel */}
       <div className="lg:col-span-1 space-y-6">
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-6">
-          <div className="text-center pb-4 border-b border-slate-800">
+        <div className="card p-6 space-y-6 animate-fade-up">
+          <div className="text-center pb-5 border-b border-line">
             <div className="relative inline-block mb-3">
               {avatarPath ? (
                 <img
                   src={`/api/files/${avatarPath}`}
                   alt="Avatar"
-                  className="w-24 h-24 rounded-full object-cover border-2 border-purple-500 shadow-lg shadow-purple-500/10"
+                  className="w-24 h-24 rounded-full object-cover ring-2 ring-brand-500/60 shadow-glow-sm"
                 />
               ) : (
-                <div className="w-24 h-24 rounded-full bg-gradient-to-br from-purple-600 to-indigo-600 flex items-center justify-center text-3xl font-extrabold text-white shadow-lg">
+                <div className="w-24 h-24 rounded-full bg-brand-gradient flex items-center justify-center text-3xl font-extrabold text-white shadow-glow-sm">
                   {user?.displayName ? user.displayName[0].toUpperCase() : '?'}
                 </div>
               )}
             </div>
-            <h2 className="text-xl font-bold text-white tracking-tight">{user?.displayName}</h2>
-            <p className="text-slate-500 text-xs mt-0.5">{user?.role} · {user?.email}</p>
+            <h2 className="text-xl font-bold">{user?.displayName}</h2>
+            <p className="text-slate-500 text-xs mt-1">{user?.role} · {user?.email}</p>
           </div>
 
           <form onSubmit={handleProfileSubmit} className="space-y-4">
-            <h3 className="text-sm font-bold text-white uppercase tracking-wider mb-2">Edit Settings</h3>
+            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">Edit settings</h3>
 
             {profileSuccess && (
-              <div className="p-3 bg-emerald-950/50 border border-emerald-900 text-emerald-400 rounded-xl text-xs text-center">
+              <div className="p-3 bg-emerald-950/40 border border-emerald-900/60 text-emerald-300 rounded-xl text-xs text-center animate-scale-in">
                 Profile updated successfully!
               </div>
             )}
             {profileError && (
-              <div className="p-3 bg-red-950/50 border border-red-900 text-red-400 rounded-xl text-xs text-center">
+              <div className="p-3 bg-rose-950/40 border border-rose-900/60 text-rose-300 rounded-xl text-xs text-center">
                 {profileError}
               </div>
             )}
 
             <div>
-              <label className="block text-xs font-semibold text-slate-400 mb-1.5">Display Name</label>
-              <input
-                type="text"
-                required
-                value={displayName}
-                onChange={(e) => setDisplayName(e.target.value)}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-purple-500"
-              />
+              <label className="label">Display name</label>
+              <input type="text" required value={displayName} onChange={(e) => setDisplayName(e.target.value)} className="input" />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-400 mb-1.5">Preferred Currency</label>
-              <select
-                value={preferredCurrency}
-                onChange={(e) => setPreferredCurrency(e.target.value)}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-purple-500"
-              >
+              <label className="label">Preferred currency</label>
+              <select value={preferredCurrency} onChange={(e) => setPreferredCurrency(e.target.value)} className="input">
                 <option value="USD">USD ($)</option>
                 <option value="EUR">EUR (€)</option>
                 <option value="GBP">GBP (£)</option>
@@ -185,177 +154,123 @@ export const Dashboard: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-400 mb-1.5">Upload Avatar</label>
+              <label className="label">Upload avatar</label>
               <input
                 type="file"
                 onChange={handleAvatarUpload}
-                className="block w-full text-xs text-slate-400 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-purple-950 file:text-purple-400 hover:file:bg-purple-900 transition-colors file:cursor-pointer"
+                className="block w-full text-xs text-slate-400 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-brand-500/15 file:text-brand-300 hover:file:bg-brand-500/25 file:cursor-pointer file:transition-colors"
               />
-              {uploadingAvatar && <p className="text-xs text-purple-400 animate-pulse mt-1">Uploading...</p>}
+              {uploadingAvatar && (
+                <p className="text-xs text-brand-300 flex items-center gap-2 mt-1.5">
+                  <span className="w-3 h-3 border-2 border-brand-400/40 border-t-brand-400 rounded-full animate-spin" />
+                  Uploading…
+                </p>
+              )}
             </div>
 
-            <button
-              type="submit"
-              disabled={updatingProfile || uploadingAvatar}
-              className="w-full bg-purple-600 hover:bg-purple-500 text-white font-bold py-2.5 rounded-xl text-sm transition-colors mt-2 disabled:opacity-50"
-            >
-              {updatingProfile ? 'Saving...' : 'Save Settings'}
+            <button type="submit" disabled={updatingProfile || uploadingAvatar} className="btn-primary w-full">
+              {updatingProfile ? 'Saving…' : 'Save Settings'}
             </button>
           </form>
         </div>
       </div>
 
-      {/* Role Panel Right Panel */}
+      {/* Role panel */}
       <div className="lg:col-span-2 space-y-6">
-        {/* Client Section */}
+        {/* Client */}
         {user?.role === 'Client' && (
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-6">
-            <div className="flex justify-between items-center pb-4 border-b border-slate-800">
+          <div className="card p-6 space-y-6 animate-fade-up">
+            <div className="flex justify-between items-center pb-4 border-b border-line gap-3">
               <div>
-                <h2 className="text-2xl font-extrabold text-white tracking-tight my-0">My Posted Jobs</h2>
+                <h2 className="text-2xl font-extrabold">My posted jobs</h2>
                 <p className="text-slate-400 text-xs mt-0.5">Manage your active and completed job postings</p>
               </div>
-              <Link
-                to="/jobs/new"
-                className="bg-purple-600 hover:bg-purple-500 text-white font-bold py-2 px-4 rounded-xl text-xs transition-colors shadow-md shadow-purple-500/10"
-              >
-                Post New Job
-              </Link>
+              <Link to="/jobs/new" className="btn-primary shrink-0">Post job</Link>
             </div>
 
             {loadingJobs ? (
-              <div className="flex justify-center py-12 text-purple-500">
-                <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-purple-500"></div>
+              <div className="flex justify-center py-12">
+                <div className="w-8 h-8 border-2 border-brand-500/30 border-t-brand-500 rounded-full animate-spin" />
               </div>
             ) : !myJobs || myJobs.length === 0 ? (
-              <div className="text-center py-12 text-slate-500 text-sm">
-                You haven't posted any jobs yet.
-              </div>
+              <div className="text-center py-12 text-slate-500 text-sm">You haven't posted any jobs yet.</div>
             ) : (
-              <div className="space-y-4">
-                {myJobs.map((job: any) => {
-                  const jobStatus = getJobStatusLabel(job.status);
-                  return (
-                    <div
-                      key={job.id}
-                      className="bg-slate-950 border border-slate-850 hover:border-slate-750 transition-colors p-5 rounded-xl flex justify-between items-center gap-4"
-                    >
-                      <div className="space-y-2">
-                        <div className="flex items-center gap-2">
-                          <span className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded-full border ${jobStatus.color}`}>
-                            {jobStatus.text}
-                          </span>
-                          <span className="text-xs text-slate-500">{job.category}</span>
-                        </div>
-                        <Link to={`/jobs/${job.id}`}>
-                          <h4 className="font-bold text-white text-md hover:text-purple-400 transition-colors">
-                            {job.title}
-                          </h4>
-                        </Link>
-                        <p className="text-slate-500 text-xs">
-                          Budget: <span className="font-semibold text-slate-300">{job.budgetAmount.toFixed(2)} {job.budgetCurrency}</span> ({job.budgetType === 0 ? 'Fixed' : 'Hourly'})
-                        </p>
+              <div className="space-y-3 stagger">
+                {myJobs.map((job: any) => (
+                  <div key={job.id} className="glass rounded-xl p-5 flex justify-between items-center gap-4 transition-all hover:border-brand-500/30">
+                    <div className="space-y-2 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <span className={jobBadge(job.status)}>{jobLabel(job.status)}</span>
+                        <span className="text-xs text-slate-500">{job.category}</span>
                       </div>
-
-                      <div className="text-right space-y-1">
-                        <span className="text-xs font-bold text-purple-400 bg-purple-950/40 border border-purple-900/30 px-3 py-1 rounded-full">
-                          {job.proposalCount} Bid{job.proposalCount !== 1 ? 's' : ''}
-                        </span>
-                        <div className="pt-2.5">
-                          <Link
-                            to={`/jobs/${job.id}`}
-                            className="bg-slate-850 hover:bg-slate-800 border border-slate-800 hover:border-slate-700 text-slate-200 font-bold py-1.5 px-3.5 rounded-lg text-xs transition-colors"
-                          >
-                            Manage Bids
-                          </Link>
-                        </div>
+                      <Link to={`/jobs/${job.id}`}>
+                        <h4 className="font-bold text-white hover:text-brand-300 transition-colors">{job.title}</h4>
+                      </Link>
+                      <p className="text-slate-500 text-xs">
+                        Budget: <span className="font-semibold text-slate-300">{job.budgetAmount.toFixed(2)} {job.budgetCurrency}</span> ({job.budgetType === 0 ? 'Fixed' : 'Hourly'})
+                      </p>
+                    </div>
+                    <div className="text-right space-y-2 shrink-0">
+                      <span className="badge-brand">{job.proposalCount} bid{job.proposalCount !== 1 ? 's' : ''}</span>
+                      <div>
+                        <Link to={`/jobs/${job.id}`} className="btn-secondary py-1.5 px-3.5 text-xs">Manage bids</Link>
                       </div>
                     </div>
-                  );
-                })}
+                  </div>
+                ))}
               </div>
             )}
           </div>
         )}
 
-        {/* Freelancer Section */}
+        {/* Freelancer */}
         {user?.role === 'Freelancer' && (
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-6">
-            <div className="pb-4 border-b border-slate-800">
-              <h2 className="text-2xl font-extrabold text-white tracking-tight my-0">Applied Jobs</h2>
+          <div className="card p-6 space-y-6 animate-fade-up">
+            <div className="pb-4 border-b border-line">
+              <h2 className="text-2xl font-extrabold">Applied jobs</h2>
               <p className="text-slate-400 text-xs mt-0.5">Track the status of your submitted proposals</p>
             </div>
 
             {loadingProposals ? (
-              <div className="flex justify-center py-12 text-purple-500">
-                <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-purple-500"></div>
+              <div className="flex justify-center py-12">
+                <div className="w-8 h-8 border-2 border-brand-500/30 border-t-brand-500 rounded-full animate-spin" />
               </div>
             ) : !myProposals || myProposals.length === 0 ? (
-              <div className="text-center py-12 text-slate-500 text-sm">
-                You haven't applied to any jobs yet.
-              </div>
+              <div className="text-center py-12 text-slate-500 text-sm">You haven't applied to any jobs yet.</div>
             ) : (
-              <div className="space-y-4">
-                {myProposals.map((proposal: any) => {
-                  const bidStatus = getStatusLabel(proposal.status);
-                  return (
-                    <div
-                      key={proposal.id}
-                      className="bg-slate-950 border border-slate-850 hover:border-slate-750 transition-colors p-5 rounded-xl flex flex-col md:flex-row md:items-center justify-between gap-4"
-                    >
-                      <div className="space-y-1.5 flex-1">
-                        <div className="flex items-center gap-2">
-                          <span className={`text-[10px] font-bold uppercase px-2.5 py-0.5 rounded-full border ${bidStatus.color}`}>
-                            {bidStatus.text}
-                          </span>
-                          <span className="text-xs text-slate-500">
-                            Submitted on {new Date(proposal.createdAt).toLocaleDateString()}
-                          </span>
-                        </div>
-                        <Link to={`/jobs/${proposal.jobId}`}>
-                          <h4 className="font-bold text-white text-md hover:text-purple-400 transition-colors">
-                            {proposal.jobTitle}
-                          </h4>
-                        </Link>
-                        <div className="text-xs text-slate-400 flex flex-wrap gap-x-4 gap-y-1">
-                          <span>
-                            Your Bid:{' '}
-                            <span className="font-semibold text-slate-200">
-                              {proposal.bidAmount.toFixed(2)} {proposal.jobCurrency || 'USD'}
-                            </span>
-                          </span>
-                          <span>
-                            Delivery:{' '}
-                            <span className="font-semibold text-slate-200">
-                              {new Date(proposal.deliveryDate).toLocaleDateString()}
-                            </span>
-                          </span>
-                        </div>
+              <div className="space-y-3 stagger">
+                {myProposals.map((proposal: any) => (
+                  <div key={proposal.id} className="glass rounded-xl p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 transition-all hover:border-brand-500/30">
+                    <div className="space-y-1.5 flex-1 min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className={proposalBadge(proposal.status)}>{proposalLabel(proposal.status)}</span>
+                        <span className="text-xs text-slate-500">Submitted {new Date(proposal.createdAt).toLocaleDateString()}</span>
                       </div>
-
-                      <div className="flex items-center gap-2 pt-2 md:pt-0 self-end md:self-center">
-                        <Link
-                          to={`/jobs/${proposal.jobId}`}
-                          className="bg-slate-850 hover:bg-slate-800 border border-slate-800 hover:border-slate-700 text-slate-200 font-bold py-1.5 px-3.5 rounded-lg text-xs transition-colors"
-                        >
-                          View Job
-                        </Link>
-                        {proposal.status === 0 && (
-                          <button
-                            onClick={() => {
-                              if (window.confirm('Withdraw this bid?')) {
-                                withdrawMutation.mutate(proposal.id);
-                              }
-                            }}
-                            className="bg-red-950/40 hover:bg-red-950/80 border border-red-900/50 text-red-400 font-bold py-1.5 px-3.5 rounded-lg text-xs transition-colors"
-                          >
-                            Withdraw
-                          </button>
-                        )}
+                      <Link to={`/jobs/${proposal.jobId}`}>
+                        <h4 className="font-bold text-white hover:text-brand-300 transition-colors">{proposal.jobTitle}</h4>
+                      </Link>
+                      <div className="text-xs text-slate-400 flex flex-wrap gap-x-4 gap-y-1">
+                        <span>Your bid: <span className="font-semibold text-slate-200">{proposal.bidAmount.toFixed(2)} {proposal.jobCurrency || 'USD'}</span></span>
+                        <span>Delivery: <span className="font-semibold text-slate-200">{new Date(proposal.deliveryDate).toLocaleDateString()}</span></span>
                       </div>
                     </div>
-                  );
-                })}
+                    <div className="flex items-center gap-2 self-end md:self-center shrink-0">
+                      <Link to={`/jobs/${proposal.jobId}`} className="btn-secondary py-1.5 px-3.5 text-xs">View job</Link>
+                      {proposal.status === 0 && (
+                        <button
+                          onClick={() => {
+                            if (window.confirm('Withdraw this bid?')) {
+                              withdrawMutation.mutate(proposal.id);
+                            }
+                          }}
+                          className="btn-danger py-1.5 px-3.5 text-xs"
+                        >
+                          Withdraw
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                ))}
               </div>
             )}
           </div>

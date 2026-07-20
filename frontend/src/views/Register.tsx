@@ -41,99 +41,120 @@ export const Register: React.FC = () => {
     }
   };
 
+  const roleOptions = [
+    { value: 'Freelancer', label: 'Freelancer', hint: 'Find work & submit proposals' },
+    { value: 'Client', label: 'Client', hint: 'Post jobs & hire talent' },
+  ];
+
   return (
-    <div className="min-h-[85svh] flex items-center justify-center px-4 py-8">
-      <div className="max-w-md w-full bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl p-8 backdrop-blur-md">
+    <div className="container-app max-w-md py-10 sm:py-14">
+      <div className="card p-8 sm:p-10 animate-fade-up">
         <div className="text-center mb-8">
-          <h2 className="text-3xl font-extrabold text-white tracking-tight">Create Account</h2>
+          <div className="mx-auto mb-4 w-12 h-12 rounded-2xl bg-brand-gradient flex items-center justify-center shadow-glow-sm">
+            <svg width="22" height="22" viewBox="0 0 16 16" fill="none">
+              <path d="M8 1L14 4.5V11.5L8 15L2 11.5V4.5L8 1Z" fill="white" fillOpacity="0.95" />
+            </svg>
+          </div>
+          <h2 className="text-3xl font-extrabold">Create account</h2>
           <p className="mt-2 text-sm text-slate-400">Join the freelance marketplace</p>
         </div>
 
         {error && (
-          <div className="mb-6 p-4 bg-red-950/50 border border-red-900 rounded-lg text-red-400 text-sm text-center">
+          <div className="mb-6 p-3.5 bg-rose-950/40 border border-rose-900/60 rounded-xl text-rose-300 text-sm animate-scale-in">
             {error}
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
-            <label className="block text-sm font-semibold text-slate-300 mb-2">Display Name</label>
+            <label className="label">Display name</label>
             <input
               type="text"
               required
               value={displayName}
               onChange={(e) => setDisplayName(e.target.value)}
-              className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-purple-500 transition-colors"
+              className="input"
               placeholder="Frank Freelancer"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-slate-300 mb-2">Email Address</label>
+            <label className="label">Email address</label>
             <input
               type="email"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-purple-500 transition-colors"
+              className="input"
               placeholder="you@example.com"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-slate-300 mb-2">Password</label>
+            <label className="label">Password</label>
             <input
               type="password"
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-purple-500 transition-colors"
+              className="input"
               placeholder="••••••••"
             />
-            <p className="mt-1 text-xs text-slate-500">Requires 8+ chars, uppercase, lowercase, number, symbol.</p>
+            <p className="mt-1.5 text-xs text-slate-500">8+ chars with uppercase, lowercase, number &amp; symbol.</p>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-semibold text-slate-300 mb-2">Join As</label>
-              <select
-                value={role}
-                onChange={(e) => setRole(e.target.value)}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-purple-500 transition-colors"
-              >
-                <option value="Freelancer">Freelancer</option>
-                <option value="Client">Client</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-sm font-semibold text-slate-300 mb-2">Preferred Currency</label>
-              <select
-                value={preferredCurrency}
-                onChange={(e) => setPreferredCurrency(e.target.value)}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-purple-500 transition-colors"
-              >
-                <option value="USD">USD ($)</option>
-                <option value="EUR">EUR (€)</option>
-                <option value="GBP">GBP (£)</option>
-                <option value="CAD">CAD ($)</option>
-                <option value="AUD">AUD ($)</option>
-              </select>
+          {/* Role selector as segmented cards */}
+          <div>
+            <label className="label">Join as</label>
+            <div className="grid grid-cols-2 gap-2">
+              {roleOptions.map((opt) => (
+                <button
+                  type="button"
+                  key={opt.value}
+                  onClick={() => setRole(opt.value)}
+                  className={`rounded-xl border p-3 text-left transition-all ${
+                    role === opt.value
+                      ? 'border-brand-500/60 bg-brand-500/10 shadow-glow-sm'
+                      : 'border-line bg-ink-900/50 hover:border-line-strong'
+                  }`}
+                >
+                  <span className="block text-sm font-semibold text-white">{opt.label}</span>
+                  <span className="block text-[11px] text-slate-400 mt-0.5">{opt.hint}</span>
+                </button>
+              ))}
             </div>
           </div>
 
-          <button
-            type="submit"
-            disabled={submitting}
-            className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold py-3.5 px-4 rounded-xl transition-all shadow-lg hover:shadow-purple-500/20 disabled:opacity-50 disabled:cursor-not-allowed mt-4"
-          >
-            {submitting ? 'Creating Account...' : 'Create Account'}
+          <div>
+            <label className="label">Preferred currency</label>
+            <select
+              value={preferredCurrency}
+              onChange={(e) => setPreferredCurrency(e.target.value)}
+              className="input"
+            >
+              <option value="USD">USD ($)</option>
+              <option value="EUR">EUR (€)</option>
+              <option value="GBP">GBP (£)</option>
+              <option value="CAD">CAD ($)</option>
+              <option value="AUD">AUD ($)</option>
+            </select>
+          </div>
+
+          <button type="submit" disabled={submitting} className="btn-primary w-full py-3.5">
+            {submitting ? (
+              <>
+                <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+                Creating account…
+              </>
+            ) : (
+              'Create Account'
+            )}
           </button>
         </form>
 
-        <p className="mt-8 text-center text-sm text-slate-400">
+        <p className="mt-7 text-center text-sm text-slate-400">
           Already have an account?{' '}
-          <Link to="/login" className="text-purple-400 hover:text-purple-300 font-semibold transition-colors">
+          <Link to="/login" className="text-brand-300 hover:text-brand-200 font-semibold transition-colors">
             Sign in
           </Link>
         </p>

@@ -12,16 +12,15 @@ export const JobForm: React.FC = () => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('Web Development');
-  const [budgetType, setBudgetType] = useState('0'); // 0 = Fixed, 1 = Hourly
+  const [budgetType, setBudgetType] = useState('0');
   const [budgetAmount, setBudgetAmount] = useState('');
   const [budgetCurrency, setBudgetCurrency] = useState('USD');
   const [attachmentPath, setAttachmentPath] = useState<string | null>(null);
-  const [status, setStatus] = useState('0'); // 0 = Open, 1 = InProgress, 2 = Closed
+  const [status, setStatus] = useState('0');
 
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Fetch job details for edit mode
   const { data: job, isLoading: loadingJob } = useQuery({
     queryKey: ['job', id],
     queryFn: async () => {
@@ -44,7 +43,6 @@ export const JobForm: React.FC = () => {
     }
   }, [isEditMode, job]);
 
-  // File upload handler
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -57,9 +55,7 @@ export const JobForm: React.FC = () => {
 
     try {
       const response = await api.post('/files', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
+        headers: { 'Content-Type': 'multipart/form-data' },
       });
       setAttachmentPath(response.data.fileId);
     } catch (err: any) {
@@ -69,7 +65,6 @@ export const JobForm: React.FC = () => {
     }
   };
 
-  // Create Job mutation
   const createJobMutation = useMutation({
     mutationFn: async (payload: any) => {
       const res = await api.post('/jobs', payload);
@@ -84,7 +79,6 @@ export const JobForm: React.FC = () => {
     }
   });
 
-  // Update Job mutation
   const updateJobMutation = useMutation({
     mutationFn: async (payload: any) => {
       const res = await api.put(`/jobs/${id}`, payload);
@@ -124,51 +118,48 @@ export const JobForm: React.FC = () => {
 
   if (isEditMode && loadingJob) {
     return (
-      <div className="flex justify-center items-center py-20 text-purple-500">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500"></div>
+      <div className="flex justify-center items-center py-24">
+        <div className="w-10 h-10 border-2 border-brand-500/30 border-t-brand-500 rounded-full animate-spin" />
       </div>
     );
   }
 
+  const submitting = createJobMutation.isPending || updateJobMutation.isPending || uploading;
+
   return (
-    <div className="max-w-2xl w-full mx-auto px-4 py-8">
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-8 shadow-xl backdrop-blur-md">
-        <div className="border-b border-slate-800 pb-4 mb-6">
-          <h2 className="text-3xl font-extrabold text-white tracking-tight my-0">
-            {isEditMode ? 'Edit Job Posting' : 'Post a New Job'}
+    <div className="container-app max-w-2xl py-8">
+      <div className="card p-8 animate-fade-up">
+        <div className="border-b border-line pb-5 mb-6">
+          <span className="eyebrow">{isEditMode ? 'Edit' : 'New posting'}</span>
+          <h2 className="mt-2 text-3xl font-extrabold">
+            {isEditMode ? 'Edit job posting' : 'Post a new job'}
           </h2>
-          <p className="mt-1 text-sm text-slate-400">
-            Fill out the details to request proposals from freelancers
-          </p>
+          <p className="mt-1 text-sm text-slate-400">Fill out the details to request proposals from freelancers.</p>
         </div>
 
         {error && (
-          <div className="mb-6 p-4 bg-red-950/50 border border-red-900 rounded-lg text-red-400 text-sm">
+          <div className="mb-6 p-3.5 bg-rose-950/40 border border-rose-900/60 rounded-xl text-rose-300 text-sm animate-scale-in">
             {error}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-5">
           <div>
-            <label className="block text-sm font-semibold text-slate-350 mb-2">Project Title</label>
+            <label className="label">Project title</label>
             <input
               type="text"
               required
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-purple-500"
+              className="input"
               placeholder="e.g. Build a Shopify landing page"
             />
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-semibold text-slate-350 mb-2">Category</label>
-              <select
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-purple-500"
-              >
+              <label className="label">Category</label>
+              <select value={category} onChange={(e) => setCategory(e.target.value)} className="input">
                 <option value="Web Development">Web Development</option>
                 <option value="Mobile Development">Mobile Development</option>
                 <option value="Design">Design</option>
@@ -179,12 +170,8 @@ export const JobForm: React.FC = () => {
 
             {isEditMode && (
               <div>
-                <label className="block text-sm font-semibold text-slate-350 mb-2">Project Status</label>
-                <select
-                  value={status}
-                  onChange={(e) => setStatus(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-purple-500"
-                >
+                <label className="label">Project status</label>
+                <select value={status} onChange={(e) => setStatus(e.target.value)} className="input">
                   <option value="0">Open</option>
                   <option value="1">In Progress</option>
                   <option value="2">Closed</option>
@@ -194,51 +181,32 @@ export const JobForm: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-slate-350 mb-2">Description</label>
+            <label className="label">Description</label>
             <textarea
               required
               rows={6}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-purple-500"
-              placeholder="Provide a detailed scope of work, requirements, and deliverables..."
+              className="input"
+              placeholder="Provide a detailed scope of work, requirements, and deliverables…"
             />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-slate-950/40 p-4 rounded-xl border border-slate-850">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 glass p-4 rounded-2xl">
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-450 mb-2">Budget Type</label>
-              <select
-                value={budgetType}
-                onChange={(e) => setBudgetType(e.target.value)}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-purple-500"
-              >
+              <label className="label">Budget type</label>
+              <select value={budgetType} onChange={(e) => setBudgetType(e.target.value)} className="input">
                 <option value="0">Fixed Price</option>
                 <option value="1">Hourly Rate</option>
               </select>
             </div>
-
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-450 mb-2">Amount</label>
-              <input
-                type="number"
-                required
-                min="1"
-                step="0.01"
-                value={budgetAmount}
-                onChange={(e) => setBudgetAmount(e.target.value)}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-purple-500"
-                placeholder="500.00"
-              />
+              <label className="label">Amount</label>
+              <input type="number" required min="1" step="0.01" value={budgetAmount} onChange={(e) => setBudgetAmount(e.target.value)} className="input" placeholder="500.00" />
             </div>
-
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-450 mb-2">Currency</label>
-              <select
-                value={budgetCurrency}
-                onChange={(e) => setBudgetCurrency(e.target.value)}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-purple-500"
-              >
+              <label className="label">Currency</label>
+              <select value={budgetCurrency} onChange={(e) => setBudgetCurrency(e.target.value)} className="input">
                 <option value="USD">USD ($)</option>
                 <option value="EUR">EUR (€)</option>
                 <option value="GBP">GBP (£)</option>
@@ -248,34 +216,34 @@ export const JobForm: React.FC = () => {
             </div>
           </div>
 
-          <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
-            <label className="block text-sm font-semibold text-slate-300">File Attachment (Optional)</label>
+          <div className="glass p-4 rounded-2xl space-y-3">
+            <label className="label mb-0">File attachment (optional)</label>
             <input
               type="file"
               onChange={handleFileUpload}
-              className="block w-full text-sm text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-purple-950 file:text-purple-400 hover:file:bg-purple-900 transition-colors file:cursor-pointer"
+              className="block w-full text-sm text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-brand-500/15 file:text-brand-300 hover:file:bg-brand-500/25 file:cursor-pointer file:transition-colors"
             />
-            {uploading && <p className="text-xs text-purple-400 animate-pulse">Uploading file...</p>}
-            {attachmentPath && (
-              <p className="text-xs text-green-400 flex items-center gap-1.5">
-                ✓ Attachment uploaded successfully! (ID: {attachmentPath.substring(0, 8)}...)
+            {uploading && (
+              <p className="text-xs text-brand-300 flex items-center gap-2">
+                <span className="w-3 h-3 border-2 border-brand-400/40 border-t-brand-400 rounded-full animate-spin" />
+                Uploading file…
+              </p>
+            )}
+            {attachmentPath && !uploading && (
+              <p className="text-xs text-emerald-300 flex items-center gap-1.5">
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                </svg>
+                Attachment uploaded (ID: {attachmentPath.substring(0, 8)}…)
               </p>
             )}
           </div>
 
-          <div className="flex gap-3 pt-2">
-            <button
-              type="submit"
-              disabled={createJobMutation.isPending || updateJobMutation.isPending || uploading}
-              className="bg-purple-600 hover:bg-purple-500 text-white font-bold py-3 px-6 rounded-xl transition-all shadow-lg shadow-purple-500/10 disabled:opacity-50"
-            >
-              {isEditMode ? 'Save Changes' : 'Post Job'}
+          <div className="flex gap-3 pt-1">
+            <button type="submit" disabled={submitting} className="btn-primary">
+              {submitting ? 'Saving…' : isEditMode ? 'Save changes' : 'Post Job'}
             </button>
-            <button
-              type="button"
-              onClick={() => navigate(isEditMode ? `/jobs/${id}` : '/')}
-              className="bg-slate-850 hover:bg-slate-800 border border-slate-800 text-slate-300 font-bold py-3 px-6 rounded-xl transition-colors"
-            >
+            <button type="button" onClick={() => navigate(isEditMode ? `/jobs/${id}` : '/')} className="btn-secondary">
               Cancel
             </button>
           </div>
