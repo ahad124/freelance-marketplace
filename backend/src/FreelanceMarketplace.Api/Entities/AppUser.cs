@@ -16,6 +16,9 @@ public class AppUser : IdentityUser
     /// <summary>When true the account is blocked from authenticating.</summary>
     public bool IsDisabled { get; set; }
 
+    /// <summary>Simulated wallet balance for escrow transactions.</summary>
+    public decimal WalletBalance { get; set; }
+
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     public ICollection<Job> Jobs { get; set; } = new List<Job>();

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { ConvertedAmount } from './JobList';
 import api from '../utils/api';
 
 export const Dashboard: React.FC = () => {
@@ -9,6 +10,24 @@ export const Dashboard: React.FC = () => {
   const queryClient = useQueryClient();
 
   const [displayName, setDisplayName] = useState('');
+
+  const { data: wallet } = useQuery({
+    queryKey: ['wallet'],
+    queryFn: async () => {
+      const res = await api.get('/wallet');
+      return res.data;
+    },
+    enabled: !!user
+  });
+
+  const { data: myContracts } = useQuery({
+    queryKey: ['my-contracts'],
+    queryFn: async () => {
+      const res = await api.get('/contracts/mine');
+      return res.data;
+    },
+    enabled: !!user
+  });
   const [preferredCurrency, setPreferredCurrency] = useState('USD');
   const [avatarPath, setAvatarPath] = useState<string | null>(null);
 
@@ -121,6 +140,14 @@ export const Dashboard: React.FC = () => {
             </div>
             <h2 className="text-xl font-bold">{user?.displayName}</h2>
             <p className="text-subtle text-xs mt-1">{user?.role} · {user?.email}</p>
+            {wallet !== undefined && (
+              <div className="mt-4 inline-flex items-center gap-2 px-3 py-1.5 rounded-xl border border-line bg-surface-2 text-sm font-semibold text-fg">
+                <svg className="w-4 h-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                </svg>
+                <ConvertedAmount amount={wallet.balance} from="USD" to={user?.preferredCurrency || 'USD'} />
+              </div>
+            )}
           </div>
 
           <form onSubmit={handleProfileSubmit} className="space-y-4">
@@ -273,6 +300,65 @@ export const Dashboard: React.FC = () => {
                 ))}
               </div>
             )}
+          </div>
+        )}
+
+        {/* Contracts Section */}
+        {myContracts && myContracts.length > 0 && (
+          <div className="card p-6 space-y-6 animate-fade-up">
+            <div className="pb-4 border-b border-line">
+              <h2 className="text-2xl font-extrabold">My contracts</h2>
+              <p className="text-muted text-xs mt-0.5">Track your milestone contracts</p>
+            </div>
+            <div className="space-y-3 stagger">
+              {myContracts.map((c: any) => (
+                <div key={c.id} className="glass rounded-xl p-5 flex justify-between items-center gap-4 transition-all hover:border-brand-500/30">
+                  <div className="space-y-1.5 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className={`badge ${c.status === 0 ? 'badge-brand' : c.status === 1 ? 'badge-success' : 'badge-danger'}`}>
+                        {c.status === 0 ? 'Active' : c.status === 1 ? 'Completed' : 'Cancelled'}
+                      </span>
+                      <span className="text-xs text-subtle">Agreed: {c.agreedAmount.toFixed(2)} {c.currency}</span>
+                    </div>
+                    <Link to={`/jobs/${c.jobId}`}>
+                      <h4 className="font-bold text-fg hover:text-brand-300 transition-colors">{c.jobTitle}</h4>
+                    </Link>
+                    <p className="text-xs text-muted">
+                      {user?.role === 'Client' ? `Freelancer: ${c.freelancerName}` : `Client: ${c.clientName}`}
+                    </p>
+                  </div>
+                  <div className="shrink-0">
+                    <Link to={`/jobs/${c.jobId}`} className="btn-secondary py-1.5 px-3.5 text-xs">View milestones</Link>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Ledger Entries Section */}
+        {wallet?.ledger && wallet.ledger.length > 0 && (
+          <div className="card p-6 space-y-6 animate-fade-up">
+            <div className="pb-4 border-b border-line">
+              <h2 className="text-2xl font-extrabold">Transaction history</h2>
+              <p className="text-muted text-xs mt-0.5">Immutable audit trail of your wallet transfers</p>
+            </div>
+            <div className="space-y-3">
+              {wallet.ledger.map((l: any) => (
+                <div key={l.id} className="glass rounded-xl p-4 flex justify-between items-center gap-4">
+                  <div className="space-y-1">
+                    <p className="text-sm font-semibold text-fg">{l.note}</p>
+                    <p className="text-xs text-subtle">{new Date(l.createdAt).toLocaleString()}</p>
+                  </div>
+                  <div className="text-right">
+                    <span className={`block font-bold text-sm ${l.type === 0 ? 'text-rose-400' : 'text-emerald-400'}`}>
+                      {l.type === 0 ? '-' : '+'}{l.amount.toFixed(2)} USD
+                    </span>
+                    <span className="text-[11px] text-muted">After: {l.balanceAfter.toFixed(2)} USD</span>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         )}
       </div>

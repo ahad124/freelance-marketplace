@@ -29,6 +29,97 @@ export const JobDetails: React.FC = () => {
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [editingProposalId, setEditingProposalId] = useState<string | null>(null);
 
+  const [newMilestoneTitle, setNewMilestoneTitle] = useState('');
+  const [newMilestoneAmount, setNewMilestoneAmount] = useState('');
+  const [newMilestoneDueDate, setNewMilestoneDueDate] = useState('');
+
+  const { data: myContracts } = useQuery({
+    queryKey: ['my-contracts'],
+    queryFn: async () => {
+      const res = await api.get('/contracts/mine');
+      return res.data;
+    },
+    enabled: !!user
+  });
+
+  const contractSummary = myContracts?.find((c: any) => c.jobId === id);
+  const contractId = contractSummary?.id;
+
+  const { data: contract } = useQuery({
+    queryKey: ['contract', contractId],
+    queryFn: async () => {
+      const res = await api.get(`/contracts/${contractId}`);
+      return res.data;
+    },
+    enabled: !!contractId
+  });
+
+  const fundMilestoneMutation = useMutation({
+    mutationFn: async (milestoneId: string) => {
+      await api.post(`/milestones/${milestoneId}/fund`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['contract', contractId] });
+      queryClient.invalidateQueries({ queryKey: ['wallet'] });
+    },
+    onError: (err: any) => {
+      alert(err.response?.data?.detail || 'Failed to fund milestone.');
+    }
+  });
+
+  const submitMilestoneMutation = useMutation({
+    mutationFn: async (milestoneId: string) => {
+      await api.post(`/milestones/${milestoneId}/submit`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['contract', contractId] });
+    },
+    onError: (err: any) => {
+      alert(err.response?.data?.detail || 'Failed to submit milestone.');
+    }
+  });
+
+  const releaseMilestoneMutation = useMutation({
+    mutationFn: async (milestoneId: string) => {
+      await api.post(`/milestones/${milestoneId}/release`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['contract', contractId] });
+      queryClient.invalidateQueries({ queryKey: ['job', id] });
+      queryClient.invalidateQueries({ queryKey: ['wallet'] });
+    },
+    onError: (err: any) => {
+      alert(err.response?.data?.detail || 'Failed to release milestone.');
+    }
+  });
+
+  const rejectMilestoneMutation = useMutation({
+    mutationFn: async (milestoneId: string) => {
+      await api.post(`/milestones/${milestoneId}/reject`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['contract', contractId] });
+    },
+    onError: (err: any) => {
+      alert(err.response?.data?.detail || 'Failed to reject milestone.');
+    }
+  });
+
+  const addMilestoneMutation = useMutation({
+    mutationFn: async (payload: any) => {
+      await api.post(`/contracts/${contractId}/milestones`, payload);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['contract', contractId] });
+      setNewMilestoneTitle('');
+      setNewMilestoneAmount('');
+      setNewMilestoneDueDate('');
+    },
+    onError: (err: any) => {
+      alert(err.response?.data?.detail || 'Failed to add milestone.');
+    }
+  });
+
   const { data: job, isLoading: loadingJob, error: jobError } = useQuery({
     queryKey: ['job', id],
     queryFn: async () => {
@@ -115,6 +206,8 @@ export const JobDetails: React.FC = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['job', id] });
       queryClient.invalidateQueries({ queryKey: ['job-proposals', id] });
+      queryClient.invalidateQueries({ queryKey: ['my-contracts'] });
+      queryClient.invalidateQueries({ queryKey: ['wallet'] });
     },
     onError: (err: any) => {
       alert(err.response?.data?.detail || 'Failed to accept proposal.');
@@ -268,6 +361,25 @@ export const JobDetails: React.FC = () => {
           </div>
         )}
       </div>
+
+      {contract && (
+        <ContractPanel
+          contract={contract}
+          user={user}
+          onFund={(mId) => fundMilestoneMutation.mutate(mId)}
+          onSubmit={(mId) => submitMilestoneMutation.mutate(mId)}
+          onRelease={(mId) => releaseMilestoneMutation.mutate(mId)}
+          onReject={(mId) => rejectMilestoneMutation.mutate(mId)}
+          onAddMilestone={(title, amount, dueDate) => addMilestoneMutation.mutate({ title, amount, dueDate })}
+          newTitle={newMilestoneTitle}
+          setNewTitle={setNewMilestoneTitle}
+          newAmount={newMilestoneAmount}
+          setNewAmount={setNewMilestoneAmount}
+          newDueDate={newMilestoneDueDate}
+          setNewDueDate={setNewMilestoneDueDate}
+          isAdding={addMilestoneMutation.isPending}
+        />
+      )}
 
       {/* Freelancer Proposal Section */}
       {user?.role === 'Freelancer' && (
@@ -448,6 +560,137 @@ export const JobDetails: React.FC = () => {
             </div>
           )}
         </div>
+      )}
+    </div>
+  );
+};
+
+const MILESTONE_STATUS_MAP: Record<number, { label: string; cls: string }> = {
+  0: { label: 'Unfunded', cls: 'badge-danger' },
+  1: { label: 'Escrowed', cls: 'badge-brand' },
+  2: { label: 'Submitted', cls: 'badge-warning' },
+  3: { label: 'Released', cls: 'badge-success' },
+};
+
+const MilestoneStatusBadge: React.FC<{ status: number }> = ({ status }) => {
+  const s = MILESTONE_STATUS_MAP[status] ?? MILESTONE_STATUS_MAP[0];
+  return <span className={s.cls}>{s.label}</span>;
+};
+
+const ContractPanel: React.FC<{
+  contract: any;
+  user: any;
+  onFund: (id: string) => void;
+  onSubmit: (id: string) => void;
+  onRelease: (id: string) => void;
+  onReject: (id: string) => void;
+  onAddMilestone: (title: string, amount: number, dueDate: string) => void;
+  newTitle: string;
+  setNewTitle: (v: string) => void;
+  newAmount: string;
+  setNewAmount: (v: string) => void;
+  newDueDate: string;
+  setNewDueDate: (v: string) => void;
+  isAdding: boolean;
+}> = ({
+  contract,
+  user,
+  onFund,
+  onSubmit,
+  onRelease,
+  onReject,
+  onAddMilestone,
+  newTitle,
+  setNewTitle,
+  newAmount,
+  setNewAmount,
+  newDueDate,
+  setNewDueDate,
+  isAdding
+}) => {
+  const handleAddSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onAddMilestone(newTitle, parseFloat(newAmount), new Date(newDueDate).toISOString());
+  };
+
+  return (
+    <div className="card p-8 space-y-6 animate-fade-up">
+      <div className="border-b border-line pb-4 flex justify-between items-center flex-wrap gap-2">
+        <div>
+          <h3 className="text-xl font-bold">Contract & Milestones</h3>
+          <p className="text-subtle text-xs mt-1">
+            Status: <span className="font-semibold text-fg">{contract.status === 0 ? 'Active' : contract.status === 1 ? 'Completed' : 'Cancelled'}</span>
+          </p>
+        </div>
+        <div className="text-right">
+          <span className="block text-xs text-subtle">Agreed Amount</span>
+          <span className="text-lg font-bold text-brand-300">{contract.agreedAmount.toFixed(2)} {contract.currency}</span>
+        </div>
+      </div>
+
+      <div className="space-y-4">
+        {contract.milestones.length === 0 ? (
+          <p className="text-center py-6 text-subtle text-sm">No milestones defined yet.</p>
+        ) : (
+          contract.milestones.map((m: any) => (
+            <div key={m.id} className="glass rounded-2xl p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div className="space-y-1.5 min-w-0">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <MilestoneStatusBadge status={m.status} />
+                  <span className="text-xs text-subtle">Due {new Date(m.dueDate).toLocaleDateString()}</span>
+                </div>
+                <h4 className="font-bold text-fg">{m.title}</h4>
+                <p className="text-xs text-muted">Amount: <span className="font-semibold text-fg">{m.amount.toFixed(2)} {contract.currency}</span></p>
+              </div>
+
+              <div className="flex items-center gap-2 shrink-0">
+                {user.role === 'Client' && m.status === 0 && contract.status === 0 && (
+                  <button onClick={() => onFund(m.id)} className="btn-primary py-1.5 px-3.5 text-xs">
+                    Fund Escrow
+                  </button>
+                )}
+                {user.role === 'Freelancer' && m.status === 1 && contract.status === 0 && (
+                  <button onClick={() => onSubmit(m.id)} className="btn-primary py-1.5 px-3.5 text-xs">
+                    Submit Work
+                  </button>
+                )}
+                {user.role === 'Client' && m.status === 2 && contract.status === 0 && (
+                  <div className="flex gap-2">
+                    <button onClick={() => onRelease(m.id)} className="btn text-white bg-emerald-600 hover:bg-emerald-500 py-1.5 px-3.5 text-xs">
+                      Release Payment
+                    </button>
+                    <button onClick={() => onReject(m.id)} className="btn-danger py-1.5 px-3.5 text-xs">
+                      Request Changes
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+
+      {user.role === 'Client' && contract.status === 0 && (
+        <form onSubmit={handleAddSubmit} className="border-t border-line pt-6 space-y-4">
+          <h4 className="text-sm font-bold uppercase tracking-wider text-muted">Add New Milestone</h4>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label className="label">Milestone Title</label>
+              <input type="text" required value={newTitle} onChange={(e) => setNewTitle(e.target.value)} className="input" placeholder="e.g. Phase 1: Database Setup" />
+            </div>
+            <div>
+              <label className="label">Amount ({contract.currency})</label>
+              <input type="number" required step="0.01" value={newAmount} onChange={(e) => setNewAmount(e.target.value)} className="input" placeholder="300.00" />
+            </div>
+            <div>
+              <label className="label">Due Date</label>
+              <input type="datetime-local" required value={newDueDate} onChange={(e) => setNewDueDate(e.target.value)} className="input" />
+            </div>
+          </div>
+          <button type="submit" disabled={isAdding} className="btn-secondary">
+            {isAdding ? 'Adding…' : 'Create Milestone'}
+          </button>
+        </form>
       )}
     </div>
   );

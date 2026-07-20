@@ -24,6 +24,8 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IFileStorage, FileStorage>();
         services.AddHttpClient<ICurrencyService, CurrencyService>();
         services.AddScoped<IAdminService, AdminService>();
+        services.AddScoped<IContractService, ContractService>();
+        services.AddScoped<IEscrowService, EscrowService>();
 
         return services;
     }

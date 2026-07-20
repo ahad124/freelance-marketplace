@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
+import { useQuery } from '@tanstack/react-query';
+import api from '../utils/api';
+import { ConvertedAmount } from '../views/JobList';
 
 const ThemeToggle: React.FC = () => {
   const { theme, toggleTheme } = useTheme();
@@ -30,6 +33,15 @@ export const Navbar: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
+
+  const { data: wallet } = useQuery({
+    queryKey: ['wallet'],
+    queryFn: async () => {
+      const res = await api.get('/wallet');
+      return res.data;
+    },
+    enabled: !!user,
+  });
 
   const handleLogout = () => {
     logout();
@@ -87,6 +99,15 @@ export const Navbar: React.FC = () => {
 
         {/* Right Side */}
         <div className="flex items-center gap-3">
+          {user && wallet !== undefined && (
+            <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-line bg-surface/50 text-xs font-semibold text-fg">
+              <svg className="w-4 h-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+              </svg>
+              <span>Wallet:</span>
+              <ConvertedAmount amount={wallet.balance} from="USD" to={user.preferredCurrency} />
+            </div>
+          )}
           <ThemeToggle />
           {user ? (
             <div className="relative">

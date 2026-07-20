@@ -45,7 +45,8 @@ public class AuthService : IAuthService
             Email = request.Email,
             DisplayName = request.DisplayName,
             PreferredCurrency = (request.PreferredCurrency ?? "USD").ToUpperInvariant(),
-            EmailConfirmed = true
+            EmailConfirmed = true,
+            WalletBalance = role == Roles.Client ? 5000m : 0m
         };
 
         var created = await _userManager.CreateAsync(user, request.Password);

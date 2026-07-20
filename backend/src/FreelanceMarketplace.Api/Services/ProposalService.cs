@@ -162,6 +162,20 @@ public class ProposalService : IProposalService
             other.Status = ProposalStatus.Declined;
         }
 
+        // Create Contract
+        var contract = new Contract
+        {
+            JobId = proposal.JobId,
+            ProposalId = proposal.Id,
+            ClientId = proposal.Job.ClientId,
+            FreelancerId = proposal.FreelancerId,
+            AgreedAmount = proposal.BidAmount,
+            Currency = proposal.Job.BudgetCurrency,
+            Status = ContractStatus.Active,
+            CreatedAt = DateTime.UtcNow
+        };
+        _db.Contracts.Add(contract);
+
         await _db.SaveChangesAsync(ct);
         return await GetAsync(proposal.Id, ct);
     }

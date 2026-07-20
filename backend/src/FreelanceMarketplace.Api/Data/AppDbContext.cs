@@ -12,6 +12,9 @@ public class AppDbContext : IdentityDbContext<AppUser>
 
     public DbSet<Job> Jobs => Set<Job>();
     public DbSet<Proposal> Proposals => Set<Proposal>();
+    public DbSet<Contract> Contracts => Set<Contract>();
+    public DbSet<Milestone> Milestones => Set<Milestone>();
+    public DbSet<LedgerEntry> LedgerEntries => Set<LedgerEntry>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -22,6 +25,73 @@ public class AppDbContext : IdentityDbContext<AppUser>
             e.Property(u => u.DisplayName).HasMaxLength(120).IsRequired();
             e.Property(u => u.PreferredCurrency).HasMaxLength(3).IsRequired();
             e.Property(u => u.AvatarPath).HasMaxLength(400);
+            e.Property(u => u.WalletBalance).HasPrecision(18, 2).HasDefaultValue(0m);
+        });
+
+        builder.Entity<Contract>(e =>
+        {
+            e.Property(c => c.AgreedAmount).HasPrecision(18, 2);
+            e.Property(c => c.Currency).HasMaxLength(3).IsRequired();
+            e.HasIndex(c => c.Status);
+
+            e.HasOne(c => c.Job)
+                .WithMany()
+                .HasForeignKey(c => c.JobId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            e.HasOne(c => c.Proposal)
+                .WithMany()
+                .HasForeignKey(c => c.ProposalId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            e.HasOne(c => c.Client)
+                .WithMany()
+                .HasForeignKey(c => c.ClientId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            e.HasOne(c => c.Freelancer)
+                .WithMany()
+                .HasForeignKey(c => c.FreelancerId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        builder.Entity<Milestone>(e =>
+        {
+            e.Property(m => m.Title).HasMaxLength(200).IsRequired();
+            e.Property(m => m.Amount).HasPrecision(18, 2);
+            e.HasIndex(m => m.Status);
+
+            e.HasOne(m => m.Contract)
+                .WithMany(c => c.Milestones)
+                .HasForeignKey(m => m.ContractId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        builder.Entity<LedgerEntry>(e =>
+        {
+            e.Property(l => l.Amount).HasPrecision(18, 2);
+            e.Property(l => l.BalanceAfter).HasPrecision(18, 2);
+            e.Property(l => l.Note).HasMaxLength(1000).IsRequired();
+
+            e.HasOne(l => l.Contract)
+                .WithMany(c => c.LedgerEntries)
+                .HasForeignKey(l => l.ContractId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            e.HasOne(l => l.Milestone)
+                .WithMany()
+                .HasForeignKey(l => l.MilestoneId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            e.HasOne(l => l.FromUser)
+                .WithMany()
+                .HasForeignKey(l => l.FromUserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            e.HasOne(l => l.ToUser)
+                .WithMany()
+                .HasForeignKey(l => l.ToUserId)
+                .OnDelete(DeleteBehavior.Restrict);
         });
 
         builder.Entity<Job>(e =>
