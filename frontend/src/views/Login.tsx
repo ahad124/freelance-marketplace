@@ -48,11 +48,11 @@ export const Login: React.FC = () => {
             <h1 className="mt-5 text-4xl font-extrabold leading-tight">
               Work with the <span className="text-gradient">best talent</span>, on your terms.
             </h1>
-            <p className="mt-4 text-slate-300 max-w-sm">
+            <p className="mt-4 text-muted max-w-sm">
               Post jobs, review proposals, track milestones, and pay securely — all in one professional workspace.
             </p>
           </div>
-          <ul className="relative space-y-3 text-sm text-slate-300">
+          <ul className="relative space-y-3 text-sm text-muted">
             {['Escrow-inspired milestone tracking', 'Real-time currency conversion', 'Verified reviews & ratings'].map((f) => (
               <li key={f} className="flex items-center gap-3">
                 <span className="flex h-6 w-6 items-center justify-center rounded-full bg-brand-500/20 text-brand-300">
@@ -70,7 +70,7 @@ export const Login: React.FC = () => {
         <div className="card p-8 sm:p-10 animate-fade-up">
           <div className="mb-8">
             <h2 className="text-3xl font-extrabold">Welcome back</h2>
-            <p className="mt-2 text-sm text-slate-400">Log in to manage jobs and proposals.</p>
+            <p className="mt-2 text-sm text-muted">Log in to manage jobs and proposals.</p>
           </div>
 
           {error && (
@@ -121,12 +121,12 @@ export const Login: React.FC = () => {
 
           <button
             onClick={fillDemo}
-            className="mt-4 w-full text-xs text-slate-400 hover:text-brand-300 transition-colors"
+            className="mt-4 w-full text-xs text-muted hover:text-brand-300 transition-colors"
           >
             Use demo credentials (client@demo.test)
           </button>
 
-          <p className="mt-6 text-center text-sm text-slate-400">
+          <p className="mt-6 text-center text-sm text-muted">
             Don't have an account?{' '}
             <Link to="/register" className="text-brand-300 hover:text-brand-200 font-semibold transition-colors">
               Create an account

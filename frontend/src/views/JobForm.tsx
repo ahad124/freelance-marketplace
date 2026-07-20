@@ -134,7 +134,7 @@ export const JobForm: React.FC = () => {
           <h2 className="mt-2 text-3xl font-extrabold">
             {isEditMode ? 'Edit job posting' : 'Post a new job'}
           </h2>
-          <p className="mt-1 text-sm text-slate-400">Fill out the details to request proposals from freelancers.</p>
+          <p className="mt-1 text-sm text-muted">Fill out the details to request proposals from freelancers.</p>
         </div>
 
         {error && (
@@ -221,7 +221,7 @@ export const JobForm: React.FC = () => {
             <input
               type="file"
               onChange={handleFileUpload}
-              className="block w-full text-sm text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-brand-500/15 file:text-brand-300 hover:file:bg-brand-500/25 file:cursor-pointer file:transition-colors"
+              className="block w-full text-sm text-muted file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-brand-500/15 file:text-brand-300 hover:file:bg-brand-500/25 file:cursor-pointer file:transition-colors"
             />
             {uploading && (
               <p className="text-xs text-brand-300 flex items-center gap-2">

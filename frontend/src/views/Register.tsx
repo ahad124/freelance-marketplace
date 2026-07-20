@@ -56,7 +56,7 @@ export const Register: React.FC = () => {
             </svg>
           </div>
           <h2 className="text-3xl font-extrabold">Create account</h2>
-          <p className="mt-2 text-sm text-slate-400">Join the freelance marketplace</p>
+          <p className="mt-2 text-sm text-muted">Join the freelance marketplace</p>
         </div>
 
         {error && (
@@ -100,7 +100,7 @@ export const Register: React.FC = () => {
               className="input"
               placeholder="••••••••"
             />
-            <p className="mt-1.5 text-xs text-slate-500">8+ chars with uppercase, lowercase, number &amp; symbol.</p>
+            <p className="mt-1.5 text-xs text-subtle">8+ chars with uppercase, lowercase, number &amp; symbol.</p>
           </div>
 
           {/* Role selector as segmented cards */}
@@ -118,8 +118,8 @@ export const Register: React.FC = () => {
                       : 'border-line bg-ink-900/50 hover:border-line-strong'
                   }`}
                 >
-                  <span className="block text-sm font-semibold text-white">{opt.label}</span>
-                  <span className="block text-[11px] text-slate-400 mt-0.5">{opt.hint}</span>
+                  <span className="block text-sm font-semibold text-fg">{opt.label}</span>
+                  <span className="block text-[11px] text-muted mt-0.5">{opt.hint}</span>
                 </button>
               ))}
             </div>
@@ -152,7 +152,7 @@ export const Register: React.FC = () => {
           </button>
         </form>
 
-        <p className="mt-7 text-center text-sm text-slate-400">
+        <p className="mt-7 text-center text-sm text-muted">
           Already have an account?{' '}
           <Link to="/login" className="text-brand-300 hover:text-brand-200 font-semibold transition-colors">
             Sign in

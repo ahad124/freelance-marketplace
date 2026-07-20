@@ -1,17 +1,27 @@
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
+  darkMode: 'class',
   theme: {
     extend: {
       colors: {
-        // Base / surfaces (layered dark elevation)
-        ink: { DEFAULT: '#080B14', 900: '#0A0E1A', 800: '#0E131F' },
-        surface: '#111725',
-        'surface-2': '#151C2C',
-        elevated: '#1A2334',
-        line: 'rgba(255,255,255,0.08)',
-        'line-strong': 'rgba(255,255,255,0.14)',
-        // Brand (indigo → violet)
+        // Base / surfaces (theme-aware via CSS variables — see index.css)
+        ink: {
+          DEFAULT: 'rgb(var(--ink) / <alpha-value>)',
+          900: 'rgb(var(--ink-900) / <alpha-value>)',
+          800: 'rgb(var(--ink-800) / <alpha-value>)',
+        },
+        surface: 'rgb(var(--surface) / <alpha-value>)',
+        'surface-2': 'rgb(var(--surface-2) / <alpha-value>)',
+        elevated: 'rgb(var(--elevated) / <alpha-value>)',
+        line: 'rgb(var(--line) / <alpha-value>)',
+        'line-strong': 'rgb(var(--line-strong) / <alpha-value>)',
+        // Semantic text + overlay (theme-aware)
+        fg: 'rgb(var(--fg) / <alpha-value>)',
+        muted: 'rgb(var(--muted) / <alpha-value>)',
+        subtle: 'rgb(var(--subtle) / <alpha-value>)',
+        overlay: 'rgb(var(--overlay) / <alpha-value>)',
+        // Brand (indigo → violet) — constant across themes
         brand: {
           50: '#eef2ff', 100: '#e0e7ff', 200: '#c7d2fe', 300: '#a5b4fc',
           400: '#818cf8', 500: '#6366f1', 600: '#5b54e6', 700: '#4a45c9',

@@ -19,17 +19,17 @@ export const ConvertedAmount: React.FC<{ amount: number; from: string; to: strin
   });
 
   if (from.toUpperCase() === to.toUpperCase()) {
-    return <span className="font-bold text-white">{amount.toFixed(2)} {to}</span>;
+    return <span className="font-bold text-fg">{amount.toFixed(2)} {to}</span>;
   }
 
   if (isLoading) {
-    return <span className="text-slate-500 text-sm">Converting…</span>;
+    return <span className="text-subtle text-sm">Converting…</span>;
   }
 
   return (
-    <span className="font-bold text-white">
+    <span className="font-bold text-fg">
       {data?.toFixed(2)} {to}{' '}
-      <span className="text-xs text-slate-500 font-normal">
+      <span className="text-xs text-subtle font-normal">
         (was {amount.toFixed(2)} {from})
       </span>
     </span>
@@ -83,7 +83,7 @@ export const JobList: React.FC = () => {
             <h1 className="mt-3 text-4xl sm:text-5xl font-extrabold">
               Explore <span className="text-gradient">open jobs</span>
             </h1>
-            <p className="mt-2 text-slate-300">Discover and bid on freelance projects from vetted clients.</p>
+            <p className="mt-2 text-muted">Discover and bid on freelance projects from vetted clients.</p>
           </div>
           {user?.role === 'Client' && (
             <Link to="/jobs/new" className="btn-primary">
@@ -160,13 +160,13 @@ export const JobList: React.FC = () => {
             </div>
           ) : !jobs || jobs.length === 0 ? (
             <div className="card p-16 text-center animate-fade-in">
-              <div className="mx-auto mb-4 w-14 h-14 rounded-2xl bg-white/[0.04] flex items-center justify-center">
-                <svg className="w-7 h-7 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.6}>
+              <div className="mx-auto mb-4 w-14 h-14 rounded-2xl bg-overlay/[0.04] flex items-center justify-center">
+                <svg className="w-7 h-7 text-subtle" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.6}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
               </div>
-              <p className="text-slate-300 font-semibold">No jobs match your filters</p>
-              <p className="text-slate-500 text-sm mt-1">Try clearing filters or broadening your search.</p>
+              <p className="text-muted font-semibold">No jobs match your filters</p>
+              <p className="text-subtle text-sm mt-1">Try clearing filters or broadening your search.</p>
             </div>
           ) : (
             <div className="space-y-4 stagger">
@@ -175,23 +175,23 @@ export const JobList: React.FC = () => {
                   <div className="space-y-2.5 flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
                       <CategoryChip label={job.category} />
-                      <span className="text-slate-500 text-xs">by {job.clientName}</span>
+                      <span className="text-subtle text-xs">by {job.clientName}</span>
                     </div>
                     <Link to={`/jobs/${job.id}`} className="block">
-                      <h3 className="text-xl font-bold text-white hover:text-brand-300 transition-colors">{job.title}</h3>
+                      <h3 className="text-xl font-bold text-fg hover:text-brand-300 transition-colors">{job.title}</h3>
                     </Link>
-                    <p className="text-slate-400 text-sm line-clamp-2">{job.description}</p>
+                    <p className="text-muted text-sm line-clamp-2">{job.description}</p>
                   </div>
 
                   <div className="flex flex-col items-start md:items-end gap-3 md:min-w-[210px] border-t md:border-t-0 md:border-l border-line pt-4 md:pt-0 md:pl-6 w-full md:w-auto">
                     <div className="text-sm md:text-right">
-                      <span className="block text-[11px] uppercase tracking-wide text-slate-500">
+                      <span className="block text-[11px] uppercase tracking-wide text-subtle">
                         Budget · {job.budgetType === 0 ? 'Fixed' : 'Hourly'}
                       </span>
                       {user ? (
                         <ConvertedAmount amount={job.budgetAmount} from={job.budgetCurrency} to={user.preferredCurrency} />
                       ) : (
-                        <span className="font-bold text-white">{job.budgetAmount.toFixed(2)} {job.budgetCurrency}</span>
+                        <span className="font-bold text-fg">{job.budgetAmount.toFixed(2)} {job.budgetCurrency}</span>
                       )}
                     </div>
                     <span className="badge-muted">

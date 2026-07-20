@@ -82,17 +82,17 @@ export const AdminDashboard: React.FC = () => {
       <div className="animate-fade-up">
         <span className="eyebrow">Control center</span>
         <h1 className="mt-2 text-4xl font-extrabold">Admin dashboard</h1>
-        <p className="mt-1 text-slate-400">Platform overview and user management.</p>
+        <p className="mt-1 text-muted">Platform overview and user management.</p>
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 p-1 rounded-xl bg-white/[0.04] border border-line w-fit">
+      <div className="flex gap-1 p-1 rounded-xl bg-overlay/[0.04] border border-line w-fit">
         {(['metrics', 'users'] as const).map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
             className={`px-5 py-2 text-sm font-semibold rounded-lg transition-all ${
-              activeTab === tab ? 'bg-brand-gradient text-white shadow-glow-sm' : 'text-slate-400 hover:text-white'
+              activeTab === tab ? 'bg-brand-gradient text-white shadow-glow-sm' : 'text-muted hover:text-fg'
             }`}
           >
             {tab === 'metrics' ? 'Platform Metrics' : 'Manage Users'}
@@ -115,7 +115,7 @@ export const AdminDashboard: React.FC = () => {
                   return (
                     <div key={key} className={`group card p-6 transition-all ${s.ring}`}>
                       <div className="flex items-center justify-between mb-3">
-                        <p className="text-slate-400 text-xs font-semibold uppercase tracking-wider">{label}</p>
+                        <p className="text-muted text-xs font-semibold uppercase tracking-wider">{label}</p>
                         <svg className={`w-5 h-5 ${s.text}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
                           {s.icon}
                         </svg>
@@ -136,10 +136,10 @@ export const AdminDashboard: React.FC = () => {
                     return (
                       <div key={role} className="space-y-1.5">
                         <div className="flex justify-between text-sm">
-                          <span className="font-semibold text-slate-200">{role}</span>
-                          <span className="text-slate-500">{count as number} ({pct}%)</span>
+                          <span className="font-semibold text-fg">{role}</span>
+                          <span className="text-subtle">{count as number} ({pct}%)</span>
                         </div>
-                        <div className="h-2.5 bg-white/[0.06] rounded-full overflow-hidden">
+                        <div className="h-2.5 bg-overlay/[0.06] rounded-full overflow-hidden">
                           <div className="h-full bg-brand-gradient rounded-full transition-all duration-700" style={{ width: `${pct}%` }} />
                         </div>
                       </div>
@@ -157,15 +157,15 @@ export const AdminDashboard: React.FC = () => {
                       <thead>
                         <tr className="border-b border-line">
                           {['Name', 'Email', 'Role'].map((h) => (
-                            <th key={h} className="text-left py-2 text-xs font-bold uppercase tracking-wider text-slate-500">{h}</th>
+                            <th key={h} className="text-left py-2 text-xs font-bold uppercase tracking-wider text-subtle">{h}</th>
                           ))}
                         </tr>
                       </thead>
                       <tbody>
                         {metrics.recentSignups.map((u: any) => (
                           <tr key={u.id} className="border-b border-line/60">
-                            <td className="py-3 text-white font-medium">{u.displayName}</td>
-                            <td className="py-3 text-slate-400">{u.email}</td>
+                            <td className="py-3 text-fg font-medium">{u.displayName}</td>
+                            <td className="py-3 text-muted">{u.email}</td>
                             <td className="py-3"><span className="badge-brand">{u.role}</span></td>
                           </tr>
                         ))}
@@ -189,19 +189,19 @@ export const AdminDashboard: React.FC = () => {
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
-                <thead className="border-b border-line bg-white/[0.03]">
+                <thead className="border-b border-line bg-overlay/[0.03]">
                   <tr>
                     {['Name / Email', 'Role', 'Currency', 'Status', 'Actions'].map((h) => (
-                      <th key={h} className="text-left px-5 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">{h}</th>
+                      <th key={h} className="text-left px-5 py-4 text-xs font-bold uppercase tracking-wider text-subtle">{h}</th>
                     ))}
                   </tr>
                 </thead>
                 <tbody>
                   {users?.map((user: any) => (
-                    <tr key={user.id} className="border-b border-line/60 hover:bg-white/[0.03] transition-colors">
+                    <tr key={user.id} className="border-b border-line/60 hover:bg-overlay/[0.03] transition-colors">
                       <td className="px-5 py-4">
-                        <p className="font-semibold text-white">{user.displayName}</p>
-                        <p className="text-slate-500 text-xs">{user.email}</p>
+                        <p className="font-semibold text-fg">{user.displayName}</p>
+                        <p className="text-subtle text-xs">{user.email}</p>
                       </td>
                       <td className="px-5 py-4">
                         <select
@@ -211,14 +211,14 @@ export const AdminDashboard: React.FC = () => {
                               changeRoleMutation.mutate({ userId: user.id, role: e.target.value });
                             }
                           }}
-                          className="bg-elevated border border-line rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:border-brand-500/60 cursor-pointer"
+                          className="bg-elevated border border-line rounded-lg px-3 py-1.5 text-sm text-fg focus:outline-none focus:border-brand-500/60 cursor-pointer"
                         >
                           <option value="Freelancer">Freelancer</option>
                           <option value="Client">Client</option>
                           <option value="Admin">Admin</option>
                         </select>
                       </td>
-                      <td className="px-5 py-4 text-slate-400 font-mono text-xs">{user.preferredCurrency}</td>
+                      <td className="px-5 py-4 text-muted font-mono text-xs">{user.preferredCurrency}</td>
                       <td className="px-5 py-4">
                         <span className={user.isDisabled ? 'badge-danger' : 'badge-success'}>
                           <span className={`w-1.5 h-1.5 rounded-full ${user.isDisabled ? 'bg-rose-400' : 'bg-emerald-400 animate-pulse-glow'}`} />

@@ -120,11 +120,11 @@ export const Dashboard: React.FC = () => {
               )}
             </div>
             <h2 className="text-xl font-bold">{user?.displayName}</h2>
-            <p className="text-slate-500 text-xs mt-1">{user?.role} · {user?.email}</p>
+            <p className="text-subtle text-xs mt-1">{user?.role} · {user?.email}</p>
           </div>
 
           <form onSubmit={handleProfileSubmit} className="space-y-4">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">Edit settings</h3>
+            <h3 className="text-xs font-bold uppercase tracking-wider text-muted">Edit settings</h3>
 
             {profileSuccess && (
               <div className="p-3 bg-emerald-950/40 border border-emerald-900/60 text-emerald-300 rounded-xl text-xs text-center animate-scale-in">
@@ -158,7 +158,7 @@ export const Dashboard: React.FC = () => {
               <input
                 type="file"
                 onChange={handleAvatarUpload}
-                className="block w-full text-xs text-slate-400 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-brand-500/15 file:text-brand-300 hover:file:bg-brand-500/25 file:cursor-pointer file:transition-colors"
+                className="block w-full text-xs text-muted file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-brand-500/15 file:text-brand-300 hover:file:bg-brand-500/25 file:cursor-pointer file:transition-colors"
               />
               {uploadingAvatar && (
                 <p className="text-xs text-brand-300 flex items-center gap-2 mt-1.5">
@@ -183,7 +183,7 @@ export const Dashboard: React.FC = () => {
             <div className="flex justify-between items-center pb-4 border-b border-line gap-3">
               <div>
                 <h2 className="text-2xl font-extrabold">My posted jobs</h2>
-                <p className="text-slate-400 text-xs mt-0.5">Manage your active and completed job postings</p>
+                <p className="text-muted text-xs mt-0.5">Manage your active and completed job postings</p>
               </div>
               <Link to="/jobs/new" className="btn-primary shrink-0">Post job</Link>
             </div>
@@ -193,7 +193,7 @@ export const Dashboard: React.FC = () => {
                 <div className="w-8 h-8 border-2 border-brand-500/30 border-t-brand-500 rounded-full animate-spin" />
               </div>
             ) : !myJobs || myJobs.length === 0 ? (
-              <div className="text-center py-12 text-slate-500 text-sm">You haven't posted any jobs yet.</div>
+              <div className="text-center py-12 text-subtle text-sm">You haven't posted any jobs yet.</div>
             ) : (
               <div className="space-y-3 stagger">
                 {myJobs.map((job: any) => (
@@ -201,13 +201,13 @@ export const Dashboard: React.FC = () => {
                     <div className="space-y-2 min-w-0">
                       <div className="flex items-center gap-2">
                         <span className={jobBadge(job.status)}>{jobLabel(job.status)}</span>
-                        <span className="text-xs text-slate-500">{job.category}</span>
+                        <span className="text-xs text-subtle">{job.category}</span>
                       </div>
                       <Link to={`/jobs/${job.id}`}>
-                        <h4 className="font-bold text-white hover:text-brand-300 transition-colors">{job.title}</h4>
+                        <h4 className="font-bold text-fg hover:text-brand-300 transition-colors">{job.title}</h4>
                       </Link>
-                      <p className="text-slate-500 text-xs">
-                        Budget: <span className="font-semibold text-slate-300">{job.budgetAmount.toFixed(2)} {job.budgetCurrency}</span> ({job.budgetType === 0 ? 'Fixed' : 'Hourly'})
+                      <p className="text-subtle text-xs">
+                        Budget: <span className="font-semibold text-muted">{job.budgetAmount.toFixed(2)} {job.budgetCurrency}</span> ({job.budgetType === 0 ? 'Fixed' : 'Hourly'})
                       </p>
                     </div>
                     <div className="text-right space-y-2 shrink-0">
@@ -228,7 +228,7 @@ export const Dashboard: React.FC = () => {
           <div className="card p-6 space-y-6 animate-fade-up">
             <div className="pb-4 border-b border-line">
               <h2 className="text-2xl font-extrabold">Applied jobs</h2>
-              <p className="text-slate-400 text-xs mt-0.5">Track the status of your submitted proposals</p>
+              <p className="text-muted text-xs mt-0.5">Track the status of your submitted proposals</p>
             </div>
 
             {loadingProposals ? (
@@ -236,7 +236,7 @@ export const Dashboard: React.FC = () => {
                 <div className="w-8 h-8 border-2 border-brand-500/30 border-t-brand-500 rounded-full animate-spin" />
               </div>
             ) : !myProposals || myProposals.length === 0 ? (
-              <div className="text-center py-12 text-slate-500 text-sm">You haven't applied to any jobs yet.</div>
+              <div className="text-center py-12 text-subtle text-sm">You haven't applied to any jobs yet.</div>
             ) : (
               <div className="space-y-3 stagger">
                 {myProposals.map((proposal: any) => (
@@ -244,14 +244,14 @@ export const Dashboard: React.FC = () => {
                     <div className="space-y-1.5 flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
                         <span className={proposalBadge(proposal.status)}>{proposalLabel(proposal.status)}</span>
-                        <span className="text-xs text-slate-500">Submitted {new Date(proposal.createdAt).toLocaleDateString()}</span>
+                        <span className="text-xs text-subtle">Submitted {new Date(proposal.createdAt).toLocaleDateString()}</span>
                       </div>
                       <Link to={`/jobs/${proposal.jobId}`}>
-                        <h4 className="font-bold text-white hover:text-brand-300 transition-colors">{proposal.jobTitle}</h4>
+                        <h4 className="font-bold text-fg hover:text-brand-300 transition-colors">{proposal.jobTitle}</h4>
                       </Link>
-                      <div className="text-xs text-slate-400 flex flex-wrap gap-x-4 gap-y-1">
-                        <span>Your bid: <span className="font-semibold text-slate-200">{proposal.bidAmount.toFixed(2)} {proposal.jobCurrency || 'USD'}</span></span>
-                        <span>Delivery: <span className="font-semibold text-slate-200">{new Date(proposal.deliveryDate).toLocaleDateString()}</span></span>
+                      <div className="text-xs text-muted flex flex-wrap gap-x-4 gap-y-1">
+                        <span>Your bid: <span className="font-semibold text-fg">{proposal.bidAmount.toFixed(2)} {proposal.jobCurrency || 'USD'}</span></span>
+                        <span>Delivery: <span className="font-semibold text-fg">{new Date(proposal.deliveryDate).toLocaleDateString()}</span></span>
                       </div>
                     </div>
                     <div className="flex items-center gap-2 self-end md:self-center shrink-0">

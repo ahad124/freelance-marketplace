@@ -213,34 +213,34 @@ export const JobDetails: React.FC = () => {
             <div className="flex items-center gap-2 flex-wrap">
               <span className="badge-brand">{job.category}</span>
               {jobStatusBadge}
-              <span className="text-slate-500 text-sm">Posted {new Date(job.createdAt).toLocaleDateString()}</span>
+              <span className="text-subtle text-sm">Posted {new Date(job.createdAt).toLocaleDateString()}</span>
             </div>
             <h1 className="text-3xl font-extrabold">{job.title}</h1>
-            <p className="text-slate-400 text-sm">Client: {job.clientName}</p>
+            <p className="text-muted text-sm">Client: {job.clientName}</p>
           </div>
 
           <div className="glass rounded-2xl p-4 min-w-[200px]">
-            <span className="block text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+            <span className="block text-[11px] font-semibold uppercase tracking-wide text-subtle">
               Budget · {job.budgetType === 0 ? 'Fixed' : 'Hourly'}
             </span>
             <div className="mt-1 text-lg">
               {user ? (
                 <ConvertedAmount amount={job.budgetAmount} from={job.budgetCurrency} to={user.preferredCurrency} />
               ) : (
-                <span className="text-xl font-bold text-white">{job.budgetAmount.toFixed(2)} {job.budgetCurrency}</span>
+                <span className="text-xl font-bold text-fg">{job.budgetAmount.toFixed(2)} {job.budgetCurrency}</span>
               )}
             </div>
           </div>
         </div>
 
         <div className="border-t border-line pt-6">
-          <h3 className="text-lg font-bold text-slate-100 mb-3">Job description</h3>
-          <p className="text-slate-300 leading-relaxed whitespace-pre-line">{job.description}</p>
+          <h3 className="text-lg font-bold text-fg mb-3">Job description</h3>
+          <p className="text-muted leading-relaxed whitespace-pre-line">{job.description}</p>
         </div>
 
         {job.attachmentPath && (
           <div className="border-t border-line pt-6 flex justify-between items-center glass rounded-xl p-4">
-            <span className="text-sm font-semibold text-slate-300 flex items-center gap-2">
+            <span className="text-sm font-semibold text-muted flex items-center gap-2">
               <svg className="w-4 h-4 text-brand-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
               </svg>
@@ -305,17 +305,17 @@ export const JobDetails: React.FC = () => {
                   </div>
                   <div className="grid grid-cols-2 gap-4 text-sm glass p-4 rounded-xl">
                     <div>
-                      <span className="text-slate-500 block text-xs">Bid amount</span>
-                      <span className="text-white font-semibold">{existingProposal.bidAmount.toFixed(2)} {job.budgetCurrency}</span>
+                      <span className="text-subtle block text-xs">Bid amount</span>
+                      <span className="text-fg font-semibold">{existingProposal.bidAmount.toFixed(2)} {job.budgetCurrency}</span>
                     </div>
                     <div>
-                      <span className="text-slate-500 block text-xs">Delivery date</span>
-                      <span className="text-white font-semibold">{new Date(existingProposal.deliveryDate).toLocaleDateString()}</span>
+                      <span className="text-subtle block text-xs">Delivery date</span>
+                      <span className="text-fg font-semibold">{new Date(existingProposal.deliveryDate).toLocaleDateString()}</span>
                     </div>
                   </div>
                   <div>
-                    <span className="text-slate-500 text-xs block mb-1.5">Cover letter</span>
-                    <p className="text-slate-300 whitespace-pre-line text-sm bg-ink-900/40 p-4 rounded-xl border border-line">{existingProposal.coverLetter}</p>
+                    <span className="text-subtle text-xs block mb-1.5">Cover letter</span>
+                    <p className="text-muted whitespace-pre-line text-sm bg-ink-900/40 p-4 rounded-xl border border-line">{existingProposal.coverLetter}</p>
                   </div>
                   <div className="flex gap-3 pt-1">
                     <button onClick={() => startEdit(existingProposal)} className="btn-secondary">Edit bid</button>
@@ -337,7 +337,7 @@ export const JobDetails: React.FC = () => {
             <form onSubmit={handleProposalSubmit} className="space-y-5">
               <div className="border-b border-line pb-4">
                 <h3 className="text-xl font-bold">Submit a proposal</h3>
-                <p className="text-slate-500 text-xs mt-1">Specify your bid amount and delivery estimate</p>
+                <p className="text-subtle text-xs mt-1">Specify your bid amount and delivery estimate</p>
               </div>
 
               {submitError && (
@@ -373,7 +373,7 @@ export const JobDetails: React.FC = () => {
         <div className="card p-8 space-y-6 animate-fade-up">
           <div className="border-b border-line pb-4">
             <h3 className="text-xl font-bold">Received bids</h3>
-            <p className="text-slate-500 text-xs mt-1">Review bids submitted by freelancers</p>
+            <p className="text-subtle text-xs mt-1">Review bids submitted by freelancers</p>
           </div>
 
           {loadingProposals ? (
@@ -381,23 +381,23 @@ export const JobDetails: React.FC = () => {
               <div className="w-8 h-8 border-2 border-brand-500/30 border-t-brand-500 rounded-full animate-spin" />
             </div>
           ) : !proposals || proposals.length === 0 ? (
-            <div className="text-center py-10 text-slate-500 text-sm">No proposals have been submitted yet.</div>
+            <div className="text-center py-10 text-subtle text-sm">No proposals have been submitted yet.</div>
           ) : (
             <div className="space-y-4 stagger">
               {proposals.map((proposal: any) => (
                 <div key={proposal.id} className="glass rounded-2xl p-6 space-y-4">
                   <div className="flex justify-between items-start gap-4">
                     <div>
-                      <h4 className="font-bold text-white">{proposal.freelancerName}</h4>
-                      <span className="text-xs text-slate-500">Submitted {new Date(proposal.createdAt).toLocaleDateString()}</span>
+                      <h4 className="font-bold text-fg">{proposal.freelancerName}</h4>
+                      <span className="text-xs text-subtle">Submitted {new Date(proposal.createdAt).toLocaleDateString()}</span>
                     </div>
                     <div className="text-right">
                       <span className="block font-bold text-brand-300 text-lg">{proposal.bidAmount.toFixed(2)} {job.budgetCurrency}</span>
-                      <span className="text-xs text-slate-500">Delivery by {new Date(proposal.deliveryDate).toLocaleDateString()}</span>
+                      <span className="text-xs text-subtle">Delivery by {new Date(proposal.deliveryDate).toLocaleDateString()}</span>
                     </div>
                   </div>
 
-                  <p className="text-slate-300 text-sm whitespace-pre-line bg-ink-900/40 p-4 rounded-xl border border-line">{proposal.coverLetter}</p>
+                  <p className="text-muted text-sm whitespace-pre-line bg-ink-900/40 p-4 rounded-xl border border-line">{proposal.coverLetter}</p>
 
                   <div className="flex justify-between items-center flex-wrap gap-3">
                     <StatusBadge status={proposal.status} />
@@ -411,7 +411,7 @@ export const JobDetails: React.FC = () => {
                               }
                             }}
                             disabled={acceptProposalMutation.isPending}
-                            className="btn text-white bg-emerald-600 hover:bg-emerald-500 py-1.5 px-3.5 text-xs shadow-[0_8px_24px_-10px_rgba(16,185,129,0.6)]"
+                            className="btn text-fg bg-emerald-600 hover:bg-emerald-500 py-1.5 px-3.5 text-xs shadow-[0_8px_24px_-10px_rgba(16,185,129,0.6)]"
                           >
                             Accept bid
                           </button>
