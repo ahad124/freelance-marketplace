@@ -28,5 +28,5 @@
 - **Total tests:** 20
 - **Passed:** 20
 - **Failed:** 0
-- **Backend automated test suite:** 58 tests — all green
-- **Line coverage (excl. migrations/Program):** 89.3%
+- **Backend automated test suite:** 61 tests — all green
+- **Line coverage (excl. migrations):** 86.1% (branch 57.4%, method 93.3%) — see `docs/coveragereport/`
