@@ -1,74 +1,87 @@
 Summary
-  Generated on: 20/07/2026 - 12:20:13 PM
-  Coverage date: 20/07/2026 - 12:19:42 PM
+  Generated on: 21/07/2026 - 5:17:35 PM
+  Coverage date: 21/07/2026 - 5:17:01 PM
   Parser: Cobertura
   Assemblies: 1
-  Classes: 52
-  Files: 33
-  Line coverage: 86.1%
-  Covered lines: 967
-  Uncovered lines: 156
-  Coverable lines: 1123
-  Total lines: 1969
-  Branch coverage: 57.4% (131 of 228)
-  Covered branches: 131
-  Total branches: 228
-  Method coverage: 93.3% (226 of 242)
-  Full method coverage: 85.5% (207 of 242)
-  Covered methods: 226
-  Fully covered methods: 207
-  Total methods: 242
+  Classes: 65
+  Files: 42
+  Line coverage: 88.3%
+  Covered lines: 1502
+  Uncovered lines: 199
+  Coverable lines: 1701
+  Total lines: 2818
+  Branch coverage: 58% (173 of 298)
+  Covered branches: 173
+  Total branches: 298
+  Method coverage: 94% (329 of 350)
+  Full method coverage: 87.1% (305 of 350)
+  Covered methods: 329
+  Fully covered methods: 305
+  Total methods: 350
 
-FreelanceMarketplace.Api                                               86.1%
-  FreelanceMarketplace.Api.Common.CurrencyOptions                       100%
-  FreelanceMarketplace.Api.Common.FileStorageOptions                    100%
-  FreelanceMarketplace.Api.Common.JwtOptions                            100%
-  FreelanceMarketplace.Api.Common.Roles                                 100%
-  FreelanceMarketplace.Api.Common.ServiceCollectionExtensions           100%
-  FreelanceMarketplace.Api.Controllers.AdminController                  100%
-  FreelanceMarketplace.Api.Controllers.AuthController                  88.8%
-  FreelanceMarketplace.Api.Controllers.CurrencyController               100%
-  FreelanceMarketplace.Api.Controllers.CurrencyConversionResponse       100%
-  FreelanceMarketplace.Api.Controllers.FilesController                 88.2%
-  FreelanceMarketplace.Api.Controllers.JobsController                  94.1%
-  FreelanceMarketplace.Api.Controllers.ProposalsController               80%
-  FreelanceMarketplace.Api.Controllers.UploadResponse                   100%
-  FreelanceMarketplace.Api.Data.AppDbContext                            100%
-  FreelanceMarketplace.Api.Data.DbSeeder                               93.2%
-  FreelanceMarketplace.Api.Data.DesignTimeDbContextFactory                0%
-  FreelanceMarketplace.Api.Dtos.AdminMetricsDto                         100%
-  FreelanceMarketplace.Api.Dtos.AuthResponse                            100%
-  FreelanceMarketplace.Api.Dtos.ChangeRoleRequest                       100%
-  FreelanceMarketplace.Api.Dtos.CreateJobRequest                        100%
-  FreelanceMarketplace.Api.Dtos.CreateProposalRequest                   100%
-  FreelanceMarketplace.Api.Dtos.JobDto                                  100%
-  FreelanceMarketplace.Api.Dtos.JobQuery                                100%
-  FreelanceMarketplace.Api.Dtos.LoginRequest                            100%
-  FreelanceMarketplace.Api.Dtos.ProposalDto                             100%
-  FreelanceMarketplace.Api.Dtos.RegisterRequest                         100%
-  FreelanceMarketplace.Api.Dtos.SetDisabledRequest                      100%
-  FreelanceMarketplace.Api.Dtos.UpdateJobRequest                        100%
-  FreelanceMarketplace.Api.Dtos.UpdateProfileRequest                      0%
-  FreelanceMarketplace.Api.Dtos.UpdateProposalRequest                   100%
-  FreelanceMarketplace.Api.Dtos.UserDto                                 100%
-  FreelanceMarketplace.Api.Entities.AppUser                             100%
-  FreelanceMarketplace.Api.Entities.Job                                92.3%
-  FreelanceMarketplace.Api.Entities.Proposal                             90%
-  FreelanceMarketplace.Api.Middleware.ExceptionHandlingMiddleware      78.7%
-  FreelanceMarketplace.Api.Services.AdminService                       88.8%
-  FreelanceMarketplace.Api.Services.AppException                         90%
-  FreelanceMarketplace.Api.Services.AuthService                        81.8%
-  FreelanceMarketplace.Api.Services.CurrencyService                    97.9%
-  FreelanceMarketplace.Api.Services.CurrentUser                         100%
-  FreelanceMarketplace.Api.Services.FileStorage                        85.4%
-  FreelanceMarketplace.Api.Services.JobService                         85.1%
-  FreelanceMarketplace.Api.Services.JwtTokenService                     100%
-  FreelanceMarketplace.Api.Services.ProposalService                    81.1%
-  FreelanceMarketplace.Api.Validation.CreateJobRequestValidator         100%
-  FreelanceMarketplace.Api.Validation.CreateProposalRequestValidator    100%
-  FreelanceMarketplace.Api.Validation.LoginRequestValidator             100%
-  FreelanceMarketplace.Api.Validation.RegisterRequestValidator          100%
-  FreelanceMarketplace.Api.Validation.UpdateJobRequestValidator         100%
-  FreelanceMarketplace.Api.Validation.UpdateProfileRequestValidator       0%
-  FreelanceMarketplace.Api.Validation.UpdateProposalRequestValidator    100%
-  Program                                                              60.4%
+FreelanceMarketplace.Api                                                88.3%
+  FreelanceMarketplace.Api.Common.CurrencyOptions                        100%
+  FreelanceMarketplace.Api.Common.FileStorageOptions                     100%
+  FreelanceMarketplace.Api.Common.JwtOptions                             100%
+  FreelanceMarketplace.Api.Common.Roles                                  100%
+  FreelanceMarketplace.Api.Common.ServiceCollectionExtensions            100%
+  FreelanceMarketplace.Api.Controllers.AdminController                   100%
+  FreelanceMarketplace.Api.Controllers.AuthController                   88.8%
+  FreelanceMarketplace.Api.Controllers.ContractsController               100%
+  FreelanceMarketplace.Api.Controllers.CurrencyController                100%
+  FreelanceMarketplace.Api.Controllers.CurrencyConversionResponse        100%
+  FreelanceMarketplace.Api.Controllers.FilesController                  88.2%
+  FreelanceMarketplace.Api.Controllers.JobsController                   94.1%
+  FreelanceMarketplace.Api.Controllers.MilestonesController               80%
+  FreelanceMarketplace.Api.Controllers.ProposalsController                80%
+  FreelanceMarketplace.Api.Controllers.UploadResponse                    100%
+  FreelanceMarketplace.Api.Controllers.WalletController                  100%
+  FreelanceMarketplace.Api.Data.AppDbContext                             100%
+  FreelanceMarketplace.Api.Data.DbSeeder                                94.8%
+  FreelanceMarketplace.Api.Dtos.AdminMetricsDto                          100%
+  FreelanceMarketplace.Api.Dtos.AuthResponse                             100%
+  FreelanceMarketplace.Api.Dtos.ChangeRoleRequest                        100%
+  FreelanceMarketplace.Api.Dtos.ContractDto                              100%
+  FreelanceMarketplace.Api.Dtos.CreateJobRequest                         100%
+  FreelanceMarketplace.Api.Dtos.CreateMilestoneRequest                   100%
+  FreelanceMarketplace.Api.Dtos.CreateProposalRequest                    100%
+  FreelanceMarketplace.Api.Dtos.JobDto                                   100%
+  FreelanceMarketplace.Api.Dtos.JobQuery                                 100%
+  FreelanceMarketplace.Api.Dtos.LedgerEntryDto                           100%
+  FreelanceMarketplace.Api.Dtos.LoginRequest                             100%
+  FreelanceMarketplace.Api.Dtos.MilestoneDto                             100%
+  FreelanceMarketplace.Api.Dtos.ProposalDto                              100%
+  FreelanceMarketplace.Api.Dtos.RegisterRequest                          100%
+  FreelanceMarketplace.Api.Dtos.SetDisabledRequest                       100%
+  FreelanceMarketplace.Api.Dtos.UpdateJobRequest                         100%
+  FreelanceMarketplace.Api.Dtos.UpdateProfileRequest                       0%
+  FreelanceMarketplace.Api.Dtos.UpdateProposalRequest                    100%
+  FreelanceMarketplace.Api.Dtos.UserDto                                  100%
+  FreelanceMarketplace.Api.Dtos.WalletDto                                100%
+  FreelanceMarketplace.Api.Entities.AppUser                              100%
+  FreelanceMarketplace.Api.Entities.Contract                            93.7%
+  FreelanceMarketplace.Api.Entities.Job                                 92.3%
+  FreelanceMarketplace.Api.Entities.LedgerEntry                         71.4%
+  FreelanceMarketplace.Api.Entities.Milestone                            100%
+  FreelanceMarketplace.Api.Entities.Proposal                              90%
+  FreelanceMarketplace.Api.Middleware.ExceptionHandlingMiddleware       78.7%
+  FreelanceMarketplace.Api.Services.AdminService                        88.8%
+  FreelanceMarketplace.Api.Services.AppException                         100%
+  FreelanceMarketplace.Api.Services.AuthService                           82%
+  FreelanceMarketplace.Api.Services.ContractService                     96.3%
+  FreelanceMarketplace.Api.Services.CurrencyService                     97.9%
+  FreelanceMarketplace.Api.Services.CurrentUser                          100%
+  FreelanceMarketplace.Api.Services.EscrowService                       73.8%
+  FreelanceMarketplace.Api.Services.FileStorage                         85.4%
+  FreelanceMarketplace.Api.Services.JobService                          85.1%
+  FreelanceMarketplace.Api.Services.JwtTokenService                      100%
+  FreelanceMarketplace.Api.Services.ProposalService                     82.5%
+  FreelanceMarketplace.Api.Validation.CreateJobRequestValidator          100%
+  FreelanceMarketplace.Api.Validation.CreateMilestoneRequestValidator    100%
+  FreelanceMarketplace.Api.Validation.CreateProposalRequestValidator     100%
+  FreelanceMarketplace.Api.Validation.LoginRequestValidator              100%
+  FreelanceMarketplace.Api.Validation.RegisterRequestValidator           100%
+  FreelanceMarketplace.Api.Validation.UpdateJobRequestValidator          100%
+  FreelanceMarketplace.Api.Validation.UpdateProfileRequestValidator        0%
+  FreelanceMarketplace.Api.Validation.UpdateProposalRequestValidator     100%
+  Program                                                               60.4%
