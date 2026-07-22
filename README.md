@@ -18,8 +18,8 @@
 
 | Video | Audience | Link |
 |-------|----------|------|
-| **Technical walkthrough** (code, architecture, ADRs, AI log) | Engineers | <!-- LOOM: paste technical walkthrough URL here -->(https://www.loom.com/share/5c841f1161714cf2a9cb2ed32c7130cd)
-| **Product demo** (user journey + admin function) | Stakeholders | <!-- LOOM: paste product demo URL here --> https://www.loom.com/share/0a8c0d832de043aeab72e0d596caa187
+| **Technical walkthrough** (code, architecture, ADRs, AI log) | Engineers | [▶ Watch on Loom](https://www.loom.com/share/5c841f1161714cf2a9cb2ed32c7130cd) |
+| **Product demo** (user journey + admin function) | Stakeholders | [▶ Watch on Loom](https://www.loom.com/share/0a8c0d832de043aeab72e0d596caa187) |
 
 > Recording scripts are committed at [`docs/technical-walkthrough-script.md`](docs/technical-walkthrough-script.md).
 >
