@@ -192,6 +192,8 @@ dotnet test
 - **67 tests** — all green (unit + integration).
 - **88.3% line coverage** (excluding auto-generated EF migrations and the design-time factory).
 
+![Backend coverage report — 88.3% line coverage, 58% branch coverage (coverlet + ReportGenerator)](docs/screenshots/coverage-report.png)
+
 Generate an HTML coverage report:
 
 ```bash
