@@ -31,3 +31,8 @@ appsettings.*.local.json
 .idea/
 .vscode/
 .DS_Store
+
+# Coverage report — keep only index.html tracked; the per-class pages and
+# render assets (report.css, main.js, etc.) are generated locally and not committed
+docs/coveragereport/*
+!docs/coveragereport/index.html
